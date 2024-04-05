@@ -9,7 +9,7 @@ export default function Home() {
       <div className="relative mt-4 flex flex-col md:flex-row flex-grow">
         {/* Background stickers */}
         <div className="absolute top-0 right-0 bg-orange-500 h-20 w-20 rounded-full transform rotate-45"></div>
-        <div className="absolute top-0 left-4 bg-yellow-500 h-12 w-12 rounded-lg transform rotate-45"></div>
+        <div className="absolute top-2 left-6 bg-yellow-500 h-12 w-12 rounded-lg transform rotate-45"></div>
         
         {/* Filter section */}
         <div className="w-full md:w-64 md:border-r p-4 ml-5">

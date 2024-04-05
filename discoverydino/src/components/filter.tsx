@@ -96,12 +96,18 @@ const Filter: React.FC = () => {
           className="absolute top-0 right-0 mt-4 mr-5 bg-orange-500 text-white px-4 py-2 rounded-md"
           onClick={() => setIsFilterVisible(prev => !prev)}
         >
-          {isFilterVisible ? '✕' : 'Show Filter'}
+          {isFilterVisible ? '' : 'Show Filter'}
         </button>
       )}
       {isFilterVisible && (
         <div className="absolute top-full mt-4 left-4 bg-white p-4 pt-1 rounded-lg shadow-md z-10 border-2" style={{ width: '250px' }}>
           <h2 className="text-lg font-semibold mb-4 text-center py-2 rounded-md">Filter</h2>
+          {isMobileView && <button
+              className="absolute top-0 right-0 mt-2 mr-2 bg-orange-500 text-white px-2 py-1 rounded-md"
+              onClick={() => setIsFilterVisible(false)}
+            >
+              ✕
+            </button>}
           <div className="mb-4">
             <h3 className="text-sm font-medium mb-2 border-b-2 border-gray-200 pb-2">Based on Star Rating</h3>
             <div className="flex flex-col space-y-2">
