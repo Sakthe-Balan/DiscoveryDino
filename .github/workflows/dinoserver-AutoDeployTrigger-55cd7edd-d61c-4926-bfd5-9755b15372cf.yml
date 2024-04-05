@@ -1,0 +1,43 @@
+name: Trigger auto deployment for dinoserver
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ main ]
+    paths:
+    - 'server/**'
+    - '.github/workflows/dinoserver-AutoDeployTrigger-55cd7edd-d61c-4926-bfd5-9755b15372cf.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:
+      
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.DINOSERVER_AZURE_CREDENTIALS }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }}/server 
+          registryUrl: docker.com
+          registryUsername: ${{ secrets.DINOSERVER_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.DINOSERVER_REGISTRY_PASSWORD }}
+          containerAppName: dinoserver
+          resourceGroup: g2
+          imageToBuild: docker.com/dinoserver:${{ github.sha }}
+          
+            
+
+     
+
