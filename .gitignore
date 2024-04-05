@@ -32,10 +32,7 @@ secrets.json
 *~
 
 # Ignore images or other media files that can be regenerated
-*.png
-*.jpg
-*.jpeg
-*.gif
+
 
 # Ignore compiled Python files
 __pycache__/
