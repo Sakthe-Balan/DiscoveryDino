@@ -15,7 +15,7 @@ const Card: React.FC<CardProps> = ({ heading, photoUrl, description }) => {
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6 max-w-sm mx-auto min-h-64 w-full md:max-w-md lg:max-w-lg"> {/* Adjusted width and added responsive classes */}
+    <div className="bg-white rounded-lg p-6 max-w-sm mx-auto min-h-64 w-full md:max-w-md lg:max-w-lg shadow-xl transform transition-transform duration-300 hover:shadow-2xl hover:scale-105"> {/* Adjusted width and added responsive classes */}
       <img src={photoUrl} alt={heading} className="w-full h-48 object-cover rounded-lg mb-4" />
       <h2 className="text-xl font-semibold mb-2">{heading}</h2>
       <p className="text-gray-600 mb-4">{description}</p>

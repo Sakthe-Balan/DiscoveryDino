@@ -93,7 +93,7 @@ const Filter: React.FC = () => {
     <div className="relative">
       {isMobileView && (
         <button
-          className="absolute top-0 right-0 mt-4 mr-4 bg-orange-500 text-white px-4 py-2 rounded-md"
+          className="absolute top-0 right-0 mt-4 mr-5 bg-orange-500 text-white px-4 py-2 rounded-md"
           onClick={() => setIsFilterVisible(prev => !prev)}
         >
           {isFilterVisible ? '✕' : 'Show Filter'}
@@ -135,7 +135,7 @@ const Filter: React.FC = () => {
                 </label>
               ))}
             </div>
-            {categories.length > 3 && (
+            {categories.length > 4 && (
               <button className="text-orange-500 text-sm mt-2" onClick={toggleShowCategories}>
                 {showAllCategories ? 'Show less categories' : 'Show more categories'}
               </button>
