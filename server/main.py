@@ -5,6 +5,9 @@ from dotenv import load_dotenv
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from fastapi import FastAPI, UploadFile, File, HTTPException
+from scrapy.crawler import CrawlerProcess
+from scrapy.utils.project import get_project_settings
+from dino.dino.spiders.my_spider import MySpider
 from typing import Optional
 
 load_dotenv()
@@ -33,6 +36,13 @@ async def base_function():
                 "DB_Status": "Pinged your deployment. You successfully connected to MongoDB!"}
     except Exception as e:
         return {"message": f"The following exception occurred: {e}", "status": 404}
+    
+@app.get("/scrape")
+def run_scraper():
+    process = CrawlerProcess(get_project_settings())
+    process.crawl(MySpider)
+    process.start() # This will block until the crawling is finished
+    return {"message": "Scraping completed"}
     
 # Run the FastAPI app using Uvicorn server
 if __name__ == "__main__":
