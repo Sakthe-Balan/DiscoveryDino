@@ -1,5 +1,4 @@
 import os
-import json
 import uvicorn
 from dotenv import load_dotenv
 from pymongo.mongo_client import MongoClient
@@ -9,9 +8,8 @@ from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from dino.dino.spiders.spider1 import Spider1
 from dino.dino.spiders.spider2 import Spider2
-import asyncio
 from multiprocessing import Process
-import threading
+
 
 
 from typing import Optional
@@ -58,11 +56,11 @@ def run_spider(spider_class):
 async def scrape_data():
     # Start both spiders in separate processes
     process1 = run_spider(Spider1)
-    process2 = run_spider(Spider2)
+    # process2 = run_spider(Spider2)
 
     # Wait for both processes to complete
     process1.join()
-    process2.join()
+    # process2.join()
 
     return {"message": "Scraping completed"}
 
