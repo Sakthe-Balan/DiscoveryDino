@@ -3,3 +3,4 @@ uvicorn
 pydantic
 pymongo[srv]
 python-dotenv
+scrapy
