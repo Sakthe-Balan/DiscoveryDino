@@ -1730,9 +1730,9 @@ class Spider2(scrapy.Spider):
         print(software_sections,"ss")
         for section in software_sections:
             software_info = {
-    'name': section.css('a.d-flex.align-items-center.ga_track_soft_name::text').get(),
-    'rating': section.css('span.star_new_background::text').get(),
-    'logo_href': section.css('img.soft_logo.ls-is-cached.lazyloaded::attr(src)').get(),
+    'title': section.css('a.d-flex.align-items-center.ga_track_soft_name::text').get(),
+    'price': section.css('span.star_new_background::text').get(),
+    'image_url': section.css('img.soft_logo.ls-is-cached.lazyloaded::attr(src)').get(),
     'profile_href': section.css('a.ga_track_soft_profile.view_profile_inline::attr(href)').get(),
     'website':section.css('a.ga_track_vwl_vwb.ripple_btn.cat_vwbft_fdfcgp_btn.vwb_btn.d-flex.align-items-center.justify-content-center::attr(href)')[0].get()
  }
@@ -1747,12 +1747,12 @@ class Spider2(scrapy.Spider):
     def parse_software_profile(self, response):
         software_info = response.meta['software_info']
         # Extract the overview
-        software_info['logo_href']=response.xpath('//img[not(@class)]')[2].attrib.get('src', None)
-        software_info['overview'] = response.css('p.read_more_text_overview::text').get()
+        software_info['image_url']=response.xpath('//img[not(@class)]')[2].attrib.get('src', None)
+        software_info['description'] = response.css('p.read_more_text_overview::text').get()
         
         # Extract the overall review
         
-        software_info['main_review_headings'] = response.xpath("//h3[@class='main_review_heading_main'][position() <= 3]/text()").getall()
+        software_info['reviews'] = response.xpath("//h3[@class='main_review_heading_main'][position() <= 3]/text()").getall()
 
         print(software_info)
 
