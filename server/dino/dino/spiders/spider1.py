@@ -54,6 +54,8 @@ class Spider1(Spider):
         product_data['additional_info'] = additional_info.strip() if additional_info else None
 
         # Request to the review page
+        product_data['website'] = response.css('a::attr(data-href)').get()
+
         review_link = product_data['link'] + '/reviews/'
         yield Request(review_link, callback=self.parse_reviews, meta={'product_data': product_data})
 
@@ -74,7 +76,7 @@ class Spider1(Spider):
 
         # Adding reviews to product_data
         product_data['reviews'] = reviews
-
+        
         file_exists = os.path.exists(self.output_file) and os.path.getsize(self.output_file) > 0
 
         # Append product data to the JSON file
@@ -122,5 +124,4 @@ class Spider1(Spider):
                 # Remove the chunk file
                 os.remove(chunk_file)
 
-        # Remove the original JSON file
-        os.remove(self.output_file)
+       
