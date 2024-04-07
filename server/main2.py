@@ -55,7 +55,7 @@ def run_spider(spider_class):
 @app.get("/scrape")
 async def scrape_data():
     # Start both spiders in separate processes
-    process1 = run_spider(Spider1)
+    process1 = run_spider(Spider2)
     # process2 = run_spider(Spider2)
 
     # Wait for both processes to complete
