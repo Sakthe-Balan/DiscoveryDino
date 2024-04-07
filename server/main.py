@@ -36,7 +36,7 @@ async def base_function():
     try:
         # Ping MongoDB to check connection status
         client.admin.command('ping')
-        return {"message": "Welcome to G2 Server",
+        return {"message": "Welcome to G2 Server v2",
                 "DB_Status": "Pinged your deployment. You successfully connected to MongoDB!"}
     except Exception as e:
         return {"message": f"The following exception occurred: {e}", "status": 404}
