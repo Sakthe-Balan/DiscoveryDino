@@ -4,3 +4,5 @@ pydantic
 pymongo[srv]
 python-dotenv
 scrapy
+dotenv
+boto3
