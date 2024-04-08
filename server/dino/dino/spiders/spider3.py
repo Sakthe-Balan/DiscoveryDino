@@ -19,9 +19,9 @@ class Spider3(scrapy.Spider):
 
     def parse(self, response):
         # Start date
-        start_date = datetime(2024, 4, 8)
+        start_date = datetime(2024, 1, 1)
         # End date
-        end_date = datetime(2023, 1, 1)
+        end_date = datetime(2019, 1, 1)
 
         # Loop through each date, decreasing from start_date to end_date
         current_date = start_date
