@@ -42,3 +42,4 @@ __pycache__/
 coverage/
 products.json
 outputs.json
+final.json

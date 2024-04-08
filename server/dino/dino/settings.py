@@ -101,3 +101,5 @@ DOWNLOAD_DELAY = 2
 HTTPCOMPRESSION_ENABLED = True
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36'
 # Define the headers to be used for making requests to the website
+# RETRY_HTTP_CODES = [500, 503, 504, 400, 408, 307, 403]
+# RETRY_TIMES=5
