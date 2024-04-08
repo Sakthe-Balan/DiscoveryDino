@@ -53,6 +53,7 @@ class Spider3(scrapy.Spider):
            
             # Request the detailed page
             detailed_url = 'https://www.producthunt.com/' + f'posts/{titles}'
+            mets['link'] = detailed_url
             print(detailed_url)
             links.extend(response.css('a.text-14.font-semibold.text-light-grey::attr(href)').extract())
             yield Request(detailed_url, callback=self.parse_detailed_page, meta=mets)
@@ -90,6 +91,7 @@ class Spider3(scrapy.Spider):
         'title': mets['title'],
         'image_url': mets['image_url'],
         'website': mets['website'],
+        'link': mets['link'],
         'description': mets['description'],
         'reviews': mets['reviews']
     }
