@@ -42,3 +42,5 @@ __pycache__/
 coverage/
 products.json
 outputs.json
+final.json
+spider4.py

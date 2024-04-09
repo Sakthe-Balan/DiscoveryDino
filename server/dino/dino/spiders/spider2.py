@@ -1734,7 +1734,7 @@ class Spider2(scrapy.Spider):
     'price': section.css('span.star_new_background::text').get(),
     'image_url': section.css('img.soft_logo.ls-is-cached.lazyloaded::attr(src)').get(),
     'profile_href': section.css('a.ga_track_soft_profile.view_profile_inline::attr(href)').get(),
-    'website':section.css('a.ga_track_vwl_vwb.ripple_btn.cat_vwbft_fdfcgp_btn.vwb_btn.d-flex.align-items-center.justify-content-center::attr(href)')[0].get()
+    
  }
             print(software_info)
             
@@ -1747,6 +1747,7 @@ class Spider2(scrapy.Spider):
     def parse_software_profile(self, response):
         software_info = response.meta['software_info']
         # Extract the overview
+        software_info['website']=response.css('a.ga_track_vwl_comp_d.specification_visit_website::attr(href)').get()
         software_info['image_url']=response.xpath('//img[not(@class)]')[2].attrib.get('src', None)
         software_info['description'] = response.css('p.read_more_text_overview::text').get()
         
