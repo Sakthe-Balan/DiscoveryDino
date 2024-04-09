@@ -121,3 +121,41 @@ class CustomScraper(Spider):
             s3.put_object(Bucket=self.bucket_name, Key=logs_file, Body=error_message, ContentType='text/plain', ACL='public-read')
             self.logger.error(f"Error in {self.name}: {str(e)}")
 
+#Extracting a Particular Tag
+# # To extract a particular tag, use the `css` or `xpath` method on the response object.
+# # For example, to extract all <p> tags from the page:
+# paragraphs = response.css('p').getall()
+
+# # Or, to extract the text of the first <p> tag:
+# first_paragraph = response.css('p').get()
+
+# # To extract an attribute of a tag, use the `::attr(attribute_name)` syntax.
+# # For example, to extract the href attribute of all <a> tags:
+# links = response.css('a::attr(href)').getall()
+            
+##################################################################################################################
+#Using Callbacks
+# To use a callback, specify it in the Request object. The callback is a method that will be called with the response of the request.
+# For example, to make a request to a link and process the response with a custom method:
+# yield Request(link, callback=self.custom_parse_method)
+
+# # In the custom method, you can extract data, make further requests, or perform any other processing.
+# def custom_parse_method(self, response):
+#     # Custom parsing logic here
+#     pass
+  
+# ##################################################################################################################
+#  Passing Data to meta   
+# To pass data to the `meta` attribute of a Request, simply include it in the Request object.
+# This is useful for passing data that needs to be available in the callback method.
+# # For example, to pass a product ID to a callback method:
+# yield Request(link, callback=self.custom_parse_method, meta={'product_id': product_id})
+
+# # In the callback method, you can access the data passed in `meta` like this:
+# def custom_parse_method(self, response):
+#     product_id = response.meta['product_id']
+#     # Now you can use product_id in your parsing logic
+# ################################################################################################################## 
+            
+
+
