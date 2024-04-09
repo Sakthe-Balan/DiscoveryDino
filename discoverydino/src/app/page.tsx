@@ -1,8 +1,220 @@
+"use client"
 import Header from "@/components/header";
 import Filter from '@/components/filter';
 import Card from "@/components/card";
+import React, { useState,useEffect} from 'react';
+import axios from 'axios';
+interface CardData {
+  heading: string;
+  photoUrl: string;
+  description: string;
+  rating: number;
+  similarProducts: string[];
+  contactMail: string;
+  website: string;
+ }
+
 
 export default function Home() {
+
+  // Provide initial data as part of the state
+  const initialData: CardData[] = [
+    {
+      heading: "Example Heading 1",
+      photoUrl: "https://example.com/photo1.jpg",
+      description: "Description for the first card...",
+      rating: 4.5,
+      similarProducts: ['Product 1', 'Product 2', 'Product 3'],
+      contactMail: "example1@example.com",
+      website: "https://example1.com"
+    },
+    {
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },{
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },{
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },{
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },{
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },{
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },{
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },{
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },{
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },{
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },{
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },{
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },{
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },{
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },{
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },{
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },{
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },{
+      heading: "Example Heading 2",
+      photoUrl: "https://example.com/photo2.jpg",
+      description: "Description for the second card...",
+      rating: 4.0,
+      similarProducts: ['Product 4', 'Product 5', 'Product 6'],
+      contactMail: "example2@example.com",
+      website: "https://example2.com"
+    },
+    // Add more objects for more cards
+ ];
+
+ const [data, setData] = useState<CardData[]>(initialData);
+ const [itemsToDisplay, setItemsToDisplay] = useState<number>(10);
+ const [isLoading, setIsLoading] = useState(false);
+
+
+ const fetchData = async () => {
+  setIsLoading(true); // Start loading
+  try {
+    const response = await axios.get(`http://localhost:8000/api/data?limit=${itemsToDisplay}`);
+
+    // The response data is already parsed as JSON
+    const newData = response.data;
+    console.log('API Response:', newData);
+  
+      // Check if newData is an array before updating the state
+      if (Array.isArray(newData)) {
+        setData(prevData => [...prevData, ...newData]);
+        setItemsToDisplay(prevItems => prevItems + 10);
+      } else {
+        console.error('Expected an array, but received:', newData);
+        // Optionally, handle the case where newData is not an array
+        // For example, you might want to show an error message to the user
+      }
+  } catch (error) {
+      console.error('Error fetching data:', error);
+      // Optionally, handle the error case, such as showing an error message to the user
+  } finally {
+      setIsLoading(false); // End loading
+  }
+ };
+ 
+ useEffect(() => {
+    fetchData();
+ }, []); // Empty dependency array means this effect runs once on mount
+
+ const handleLoadMore = () => {
+    fetchData();
+ };
+
   return (
     <>
       <Header />
@@ -21,63 +233,25 @@ export default function Home() {
           
           {/* Grid of cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <Card 
-              heading="Example Heading" 
-              photoUrl="https://example.com/photo.jpg" 
-              description="Since 1999, millions of people have expressed themselves on Blogger. From detailed posts about almost every apple variety you could ever imagine to a blog dedicated to the art of blogging itself, the ability to easily share, publish and express oneself on the web is at the core of Blogger’s mission. As the web constantly evolves" 
-              rating={4.5}
-              similarProducts={['Product 1', 'Product 2', 'Product 3']}
-              contactMail="example@example.com"
-              website="https://example.com"
-            />
-                        <Card 
-              heading="Example Heading" 
-              photoUrl="https://example.com/photo.jpg" 
-              description="Since 1999, millions of people have expressed themselves on Blogger. From detailed posts about almost every apple variety you could ever imagine to a blog dedicated to the art of blogging itself, the ability to easily share, publish and express oneself on the web is at the core of Blogger’s mission. As the web constantly evolves" 
-              rating={4.5}
-              similarProducts={['Product 1', 'Product 2', 'Product 3']}
-              contactMail="example@example.com"
-              website="https://example.com"
-            />
-                        <Card 
-              heading="Example Heading" 
-              photoUrl="https://example.com/photo.jpg" 
-              description="Since 1999, millions of people have expressed themselves on Blogger. From detailed posts about almost every apple variety you could ever imagine to a blog dedicated to the art of blogging itself, the ability to easily share, publish and express oneself on the web is at the core of Blogger’s mission. As the web constantly evolves" 
-              rating={4.5}
-              similarProducts={['Product 1', 'Product 2', 'Product 3']}
-              contactMail="example@example.com"
-              website="https://example.com"
-            />
-                        <Card 
-              heading="Example Heading" 
-              photoUrl="https://example.com/photo.jpg" 
-              description="Since 1999, millions of people have expressed themselves on Blogger. From detailed posts about almost every apple variety you could ever imagine to a blog dedicated to the art of blogging itself, the ability to easily share, publish and express oneself on the web is at the core of Blogger’s mission. As the web constantly evolves" 
-              rating={4.5}
-              similarProducts={['Product 1', 'Product 2', 'Product 3']}
-              contactMail="example@example.com"
-              website="https://example.com"
-            />
-                        <Card 
-              heading="Example Heading" 
-              photoUrl="https://example.com/photo.jpg" 
-              description="Since 1999, millions of people have expressed themselves on Blogger. From detailed posts about almost every apple variety you could ever imagine to a blog dedicated to the art of blogging itself, the ability to easily share, publish and express oneself on the web is at the core of Blogger’s mission. As the web constantly evolves" 
-              rating={4.5}
-              similarProducts={['Product 1', 'Product 2', 'Product 3']}
-              contactMail="example@example.com"
-              website="https://example.com"
-            />
-                        <Card 
-              heading="Example Heading" 
-              photoUrl="https://example.com/photo.jpg" 
-              description="Since 1999, millions of people have expressed themselves on Blogger. From detailed posts about almost every apple variety you could ever imagine to a blog dedicated to the art of blogging itself, the ability to easily share, publish and express oneself on the web is at the core of Blogger’s mission. As the web constantly evolves" 
-              rating={4.5}
-              similarProducts={['Product 1', 'Product 2', 'Product 3']}
-              contactMail="example@example.com"
-              website="https://example.com"
-            />
-                        
-            {/* Add more cards here */}
+          {data.map((item, index) => (
+              <Card 
+                key={index} // It's important to provide a unique key for each child in a list
+                heading={item.heading} 
+                photoUrl={item.photoUrl} 
+                description={item.description} 
+                rating={item.rating}
+                similarProducts={item.similarProducts}
+                contactMail={item.contactMail}
+                website={item.website}
+              />
+            ))}
           </div>
+           {/* Conditional rendering of loading indicator */}
+          {isLoading && <div className="mt-4 text-center">Loading more items...</div>}
+           {/* Load More Button */}
+           <button onClick={handleLoadMore} className="mt-4 bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">
+            Load More
+          </button>
         </div>
       </div>
     </>

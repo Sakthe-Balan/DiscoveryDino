@@ -3,14 +3,16 @@ import uvicorn
 from dotenv import load_dotenv
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks
+from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks,Query,Response
+from fastapi.middleware.cors import CORSMiddleware
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from dino.dino.spiders.spider1 import Spider1
 from dino.dino.spiders.spider2 import Spider2
 from dino.dino.spiders.spider3 import Spider3
+from dino.dino.spiders.spider4 import Spider4
 from multiprocessing import Process
-from typing import Optional, Dict
+from typing import Optional, Dict , List , Any
 from importlib import import_module
 
 
@@ -26,6 +28,15 @@ MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI, server_api=ServerApi('1'))
 
 app = FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"], # Allows all methods
+    allow_headers=["*"], # Allows all headers
+)
 
 # Global dictionary to store running spider processes
 running_spiders: Dict[str, Process] = {}
@@ -46,6 +57,39 @@ async def base_function():
                 "DB_Status": "Pinged your deployment. You successfully connected to MongoDB!"}
     except Exception as e:
         return {"message": f"The following exception occurred: {e}", "status": 404}
+    
+
+@app.get("/api/data")
+async def get_data(limit: int = Query(..., description="The number of documents to retrieve")):
+    """
+    Endpoint to retrieve a specified number of documents from a MongoDB collection.
+    
+    Parameters:
+    limit (int): The number of documents to retrieve.
+    
+    Returns:
+    List[Dict[str, Any]]: A list of documents from the specified collection.
+    """
+    
+    try:
+        # Assuming 'client' is your MongoClient instance
+        db_name = os.getenv("DB_NAME") # Assuming you have a DB_NAME environment variable
+        collection_name = os.getenv("COLLECTION_NAME") # Assuming you have a COLLECTION_NAME environment variable
+        if not db_name or not collection_name:
+            raise ValueError("DB_NAME or COLLECTION_NAME environment variable is not set")
+        
+        
+        db = client[db_name]
+       
+        collection = db[collection_name]
+        
+        documents = collection.find({}).limit(limit)
+        
+        print(list(documents))
+        
+        return list(documents)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
     
 
 def _run_spider(spider_class):
