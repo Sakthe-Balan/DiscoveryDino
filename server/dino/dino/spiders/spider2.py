@@ -1769,36 +1769,63 @@ class Spider2(scrapy.Spider):
 
 
     def closed(self, reason):
-        with open(self.output_file, 'a') as json_file:
-            json_file.write(']')  # Add closing square bracket to indicate the end of JSON array
+        try:
+            # Upload the JSON file to S3 after the spider is closed
+            with open(self.output_file, 'a') as json_file:
+                json_file.write(']') # Add closing square bracket to indicate the end of JSON array
+            s3 = boto3.client('s3',
+                            aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+                            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+                            region_name=os.getenv('AWS_REGION'))
 
-        
-        s3 = boto3.client('s3',
-                          aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-                          aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
-                          region_name=os.getenv('AWS_REGION'))
+            # Load existing data from JSON file if it exists and is not empty
+            if os.path.exists(self.output_file) and os.path.getsize(self.output_file) > 0:
+                with open(self.output_file, 'r') as json_file:
+                    existing_data = json.load(json_file)
 
-        # Load existing data from JSON file if it exists and is not empty
-        if os.path.exists(self.output_file) and os.path.getsize(self.output_file) > 0:
-            with open(self.output_file, 'r') as json_file:
-                existing_data = json.load(json_file)
+                total_items = len(existing_data)
+                chunk_size = 1000
+                num_chunks = ceil(total_items / chunk_size)
 
-            total_items = len(existing_data)
-            chunk_size = 1000
-            num_chunks = ceil(total_items / chunk_size)
+                for i in range(num_chunks):
+                    chunk = existing_data[i * chunk_size: (i + 1) * chunk_size]
+                    chunk_file = f'products_chunk_{i + 1}.json'
+                    
+                    # Save chunk to a separate JSON file
+                    with open(chunk_file, 'w') as chunk_json_file:
+                        json.dump(chunk, chunk_json_file, indent=4)
+                    
+                    # Upload the chunk file to S3
+                    s3.upload_file(chunk_file, self.bucket_name, f'{self.folder_name}/{chunk_file}')
+                    self.logger.info(f'{chunk_file} uploaded to {self.bucket_name}/{self.folder_name}/{chunk_file}')
 
-            for i in range(num_chunks):
-                chunk = existing_data[i * chunk_size: (i + 1) * chunk_size]
-                new_uuid = uuid.uuid4()
-                chunk_file = f'products_chunk_{new_uuid}.json'
-                
-                # Save chunk to a separate JSON file
-                with open(chunk_file, 'w') as chunk_json_file:
-                    json.dump(chunk, chunk_json_file, indent=4)
-                
-                # Upload the chunk file to S3
-                s3.upload_file(chunk_file, self.bucket_name, f'{self.folder_name}/{chunk_file}')
-                self.logger.info(f'{chunk_file} uploaded to {self.bucket_name}/{self.folder_name}/{chunk_file}')
+                    # Remove the chunk file
+                    os.remove(chunk_file)
 
-                # Remove the chunk file
-                os.remove(chunk_file)
+            # Ensure logs.txt exists and is updated regardless of the reason for closure
+            logs_file = f'{self.folder_name}/logs.txt'
+            if not s3.head_object(Bucket=self.bucket_name, Key=logs_file):
+                s3.put_object(Bucket=self.bucket_name, Key=logs_file, Body='')
+            else:
+                # Download the current content of logs.txt
+                s3.download_file(self.bucket_name, logs_file, 'temp_logs.txt')
+                with open('temp_logs.txt', 'r') as temp_logs_file:
+                    current_logs = temp_logs_file.read()
+
+            # Log success or error message based on the reason
+            if reason == 'finished':
+                log_message = f"{self.name} finished successfully.\n"
+            else:
+                log_message = f"{self.name} closed with reason: {reason}\n"
+
+            # Append the new log message to the current logs
+            updated_logs = current_logs + log_message
+
+            # Upload the updated logs back to S3
+            s3.put_object(Bucket=self.bucket_name, Key=logs_file, Body=updated_logs, ContentType='text/plain', ACL='public-read')
+
+        except Exception as e:
+            # Log the error to logs.txt
+            error_message = f"Error in {self.name}: {str(e)}\n"
+            s3.put_object(Bucket=self.bucket_name, Key=logs_file, Body=error_message, ContentType='text/plain', ACL='public-read')
+            self.logger.error(f"Error in {self.name}: {str(e)}")

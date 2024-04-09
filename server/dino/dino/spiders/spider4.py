@@ -5,30 +5,21 @@ from dotenv import load_dotenv
 from scrapy import Spider, Request
 from math import ceil
 
-# Instructions for integrating with FastAPI
-# ----------------------------------------
-# 1. Import this spider into your FastAPI application's main.py file.
-# 2. Use the Scrapy CrawlerProcess to run the spider.
-# 3. Define an endpoint in your FastAPI application that triggers the spider.
-# 4. Call the spider using its name ('custom_scraper' in this case) when the endpoint is hit.
-# Replace 'YOUR_START_URL_HERE', 'YOUR_CSS_SELECTOR_HERE', 'YOUR_BUCKET_NAME', and 'YOUR_FOLDER_NAME' with actual values.
-
-
 # Load environment variables from .env file
 load_dotenv()
 
-class CustomScraper(Spider):
-    name = 'custom_scraper'
-    start_urls = ['YOUR_START_URL_HERE'] # Define your start URLs here
+class Spider4(Spider):
+    name = 'spider4'
+    start_urls = ['https://crozdesk.com/browse'] # Define your start URLs here
     output_file = 'custom_output.json' # Output file name
-    bucket_name = 'YOUR_BUCKET_NAME' # S3 bucket name
-    folder_name = 'YOUR_FOLDER_NAME' # S3 folder name
+    bucket_name = 'dinostomach' # S3 bucket name
+    folder_name = 'crozdesk' # S3 folder name
 
     def parse(self, response):
         # Custom parsing logic goes here
         # Example: Extract links from the page
-        links = response.css('YOUR_CSS_SELECTOR_HERE').extract()
-
+        links = response.css('a::attr(href)').extract()
+        print(links)
         for link in links:
             # Customize the request to the extracted links
             yield Request(link, callback=self.custom_parse_method)
@@ -37,8 +28,8 @@ class CustomScraper(Spider):
         # Custom parsing logic for each extracted link
         # Example: Extract product details
         product_data = {
-            'title': response.css('YOUR_CSS_SELECTOR_HERE').get(),
-            'description': response.css('YOUR_CSS_SELECTOR_HERE').get(),
+            'title': response.css('.p::text').get(),
+            'description': response.css('.div::text').get(),
             # Add more fields as needed
         }
 
