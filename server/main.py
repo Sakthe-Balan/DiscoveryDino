@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks,Query,Response
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
@@ -85,9 +86,11 @@ async def get_data(limit: int = Query(..., description="The number of documents 
         
         documents = collection.find({}).limit(limit)
         
-        print(list(documents))
+        # print(list(documents))
         
-        return list(documents)
+        data_final = list(documents)
+        # print(data_final)
+        return (data_final)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     

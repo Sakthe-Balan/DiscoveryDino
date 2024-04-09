@@ -184,26 +184,28 @@ export default function Home() {
  const fetchData = async () => {
   setIsLoading(true); // Start loading
   try {
-    const response = await axios.get(`http://localhost:8000/api/data?limit=${itemsToDisplay}`);
+     const response: any = await axios.get(`http://localhost:8000/api/data?limit=${itemsToDisplay}`);
+ 
+     // The response data is already parsed as JSON
+     console.log(response.data);
+     
+     // Directly use response.data since it's already an object
 
-    // The response data is already parsed as JSON
-    const newData = response.data;
-    console.log('API Response:', newData);
-  
-      // Check if newData is an array before updating the state
-      if (Array.isArray(newData)) {
-        setData(prevData => [...prevData, ...newData]);
-        setItemsToDisplay(prevItems => prevItems + 10);
-      } else {
-        console.error('Expected an array, but received:', newData);
-        // Optionally, handle the case where newData is not an array
-        // For example, you might want to show an error message to the user
-      }
+     const newData = JSON.parse(response.data);
+     console.log('API Response:', newData);
+   
+     // Check if newData is an array before updating the state
+     if (Array.isArray(newData)) {
+       setData(prevData => [...prevData, ...newData]);
+       setItemsToDisplay(prevItems => prevItems + 10);
+     }
+     else {
+     console.log("out");}
   } catch (error) {
-      console.error('Error fetching data:', error);
-      // Optionally, handle the error case, such as showing an error message to the user
+     console.error('Error fetching data:', error);
+     // Optionally, handle the error case, such as showing an error message to the user
   } finally {
-      setIsLoading(false); // End loading
+     setIsLoading(false); // End loading
   }
  };
  
