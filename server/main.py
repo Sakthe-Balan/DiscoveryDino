@@ -1,4 +1,5 @@
 import os
+import json
 import uvicorn
 from dotenv import load_dotenv
 from pymongo.mongo_client import MongoClient
@@ -58,7 +59,7 @@ async def base_function():
                 "DB_Status": "Pinged your deployment. You successfully connected to MongoDB!"}
     except Exception as e:
         return {"message": f"The following exception occurred: {e}", "status": 404}
-    
+
 
 @app.get("/api/data")
 async def get_data(limit: int = Query(..., description="The number of documents to retrieve")):
@@ -80,17 +81,18 @@ async def get_data(limit: int = Query(..., description="The number of documents 
             raise ValueError("DB_NAME or COLLECTION_NAME environment variable is not set")
         
         
+        
         db = client[db_name]
        
         collection = db[collection_name]
         
         documents = collection.find({}).limit(limit)
         
-        # print(list(documents))
+        # Initialize an empty list to store serialized JSON objects
+        # Serialize MongoDB documents to JSON format
+        json_documents = [json.loads(json.dumps(doc, default=str)) for doc in documents]
         
-        data_final = list(documents)
-        # print(data_final)
-        return (data_final)
+        return json_documents
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
