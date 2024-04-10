@@ -28,11 +28,39 @@ const Filter: React.FC = () => {
   }, []);
 
   const categories: Category[] = [
-    { name: 'IT Software' },
-    { name: 'Information Technology' },
-    { name: 'Office' },
+    { name: 'Sales Tools' },
+    { name: 'Marketing' },
+    { name: 'Analytics Tools & Software' },
+    { name: 'Artificial Intelligence' },
+    { name: 'AR/VR' },
+    { name: 'B2B Marketplaces' },
+    { name: 'Business Services' },
+    { name: 'CAD & PLM' },
+    { name: 'Collaboration & Productivity' },
+    { name: 'Commerce' },
+    { name: 'Content Management' },
+    { name: 'Converged Infrastructure' },
+    { name: 'Customer Service' },
+    { name: 'Data Privacy' },
+    { name: 'Design' },
+    { name: 'Development' },
+    { name: 'Digital Advertising Tech' },
+    { name: 'Ecosystem Service Providers' },
     { name: 'ERP' },
-    { name: 'Veterinary' },
+    { name: 'Governance, Risk & Compliance' },
+    { name: 'Greentech' },
+    { name: 'Hosting' },
+    { name: 'HR' },
+    { name: 'IoT Management' },
+    { name: 'IT Infrastructure' },
+    { name: 'IT Management' },
+    { name: 'Marketing Services' },
+    { name: 'Marketplace Apps' },
+    { name: 'Office' },
+    { name: 'Other Services' },
+    { name: 'Professional Services' },
+    { name: 'Routers' },
+    { name: 'Security' }
   ];
 
   const handleRatingChange = (rating: number) => {

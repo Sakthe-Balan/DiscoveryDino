@@ -94,6 +94,123 @@ async def get_data(limit: int = Query(..., description="The number of documents 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
+@app.get("/api/search")
+async def search_data(collection: str = Query(..., description="Name of the collection to search in"),
+                      searchString: str = Query(None, description="String to search for in productName")):
+    """
+    Endpoint to search for a specific string within a specified collection based on productName.
+
+    Parameters:
+    - collection (str): Name of the MongoDB collection to search in.
+    - searchString (str): String to search for within the productName field.
+
+    Returns:
+    - JSON response containing the search results.
+    """
+    try:
+        # Get the database name from environment variables
+        db_name = os.getenv("DB_NAME")
+        if not db_name:
+            return {"error": "DB_NAME environment variable is not set"}
+
+        # Connect to the specified MongoDB database
+        db = client[db_name]
+
+        # Check if the specified collection exists in the database
+        if collection not in db.list_collection_names():
+            return {"error": f"Collection '{collection}' not found"}
+
+        # Retrieve the specified collection
+        target_collection = db[collection]
+
+        # Perform the search query to find documents matching the searchString in productName
+        if searchString:
+            query = {"productName": {"$regex": f".*{searchString}.*", "$options": "i"}}
+        else:
+            query = {}
+        search_results = list(target_collection.find(query))
+
+        # Convert MongoDB cursor results to JSON format
+        # json_results = json.dumps(search_results)
+        json_results = [json.loads(json.dumps(doc, default=str)) for doc in search_results]
+
+        return {"collection": collection, "searchString": searchString, "results": json_results}
+
+    except Exception as e:
+        return {"error": str(e)}
+    
+@app.get("/api/filter")
+async def filter_data(collection: str = Query(..., description="Name of the collection to search in"),
+                      rating: str = Query(None, description="The number of stars to filter from"),
+                      category: str = Query(None, description="Pick the category to filter from"),
+                      ):
+    """
+    Endpoint to search for a specific string within a specified collection based on productName.
+
+    Parameters:
+    - collection (str): Name of the MongoDB collection to search in.
+    - searchString (str): String to search for within the productName field.
+
+    Returns:
+    - JSON response containing the search results.
+    """
+
+    try:
+        # Get the database name from environment variables
+        db_name = os.getenv("DB_NAME")
+        if not db_name:
+            return {"error": "DB_NAME environment variable is not set"}
+
+        # Connect to the specified MongoDB database
+        db = client[db_name]
+
+        # Check if the specified collection exists in the database
+        if collection not in db.list_collection_names():
+            return {"error": f"Collection '{collection}' not found"}
+
+        # Retrieve the specified collection
+        target_collection = db[collection]
+
+        query = {}
+
+        # Add category filter to the query if category is provided
+        if category:
+            # query['category'] = category
+            query['category'] = {'$in': [category]}
+
+        # Add rating filter to the query if rating is provided and valid
+        if rating:
+            try:
+                rating_num = float(rating)  # Convert rating to a float for numeric comparison
+                query['rating'] = {'$gte': rating_num}  # Example: Find documents with rating greater than or equal to 'rating_num'
+            except ValueError:
+                pass  # Ignore if rating cannot be converted to a float
+        search_results = list(target_collection.find(query))
+
+        # Convert MongoDB cursor results to JSON format
+        # json_results = json.dumps(search_results)
+        json_results = [json.loads(json.dumps(doc, default=str)) for doc in search_results]
+
+        return {"collection": collection, "results": json_results}
+
+    except Exception as e:
+        return {"error": str(e)}   
+    
+    
+    pass
+
+@app.get("/api/ingest")
+async def ingest_data():
+    pass
+
+@app.get("/api/s3")
+async def s3_data():
+    pass
+
+@app.get("/api/similar")
+async def similar_data():
+    pass
+
 
 def _run_spider(spider_class):
     process = CrawlerProcess(get_project_settings())
