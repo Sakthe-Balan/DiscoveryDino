@@ -76,18 +76,14 @@ async def get_data(limit: int = Query(..., description="The number of documents 
     try:
         # Assuming 'client' is your MongoClient instance
         db_name = os.getenv("DB_NAME") # Assuming you have a DB_NAME environment variable
-        collection_name = os.getenv("COLLECTION_NAME") # Assuming you have a COLLECTION_NAME environment variable
+        collection_name = "filtered_products" # Assuming you have a COLLECTION_NAME environment variable
         if not db_name or not collection_name:
             raise ValueError("DB_NAME or COLLECTION_NAME environment variable is not set")
-        
-        
-        
         db = client[db_name]
        
         collection = db[collection_name]
         
         documents = collection.find({}).limit(limit)
-        
         # Initialize an empty list to store serialized JSON objects
         # Serialize MongoDB documents to JSON format
         json_documents = [json.loads(json.dumps(doc, default=str)) for doc in documents]

@@ -5,3 +5,4 @@ pymongo[srv]
 python-dotenv
 scrapy
 boto3
+openai==1.16.2
