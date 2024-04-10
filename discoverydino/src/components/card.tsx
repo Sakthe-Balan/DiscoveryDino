@@ -9,6 +9,8 @@ interface CardProps {
   similarProducts: string[];
   contactMail: string;
   website: string;
+  category: string[];
+  additionalInfo: string;
 }
 
 const generateStars = (rating: number): string => {
@@ -16,6 +18,10 @@ const generateStars = (rating: number): string => {
   const halfStar = rating % 1 !== 0 ? '½' : '';
   const emptyStars = '☆'.repeat(Math.floor(5 - rating));
   return filledStars + halfStar + emptyStars;
+};
+
+const truncateUrl = (url: string, maxLength: number): string => {
+  return url.length > maxLength ? `${url.substring(0, maxLength)}...` : url;
 };
 
 const Card: React.FC<CardProps> = ({
@@ -26,8 +32,11 @@ const Card: React.FC<CardProps> = ({
   similarProducts,
   contactMail,
   website,
+  category,
+  additionalInfo,
 }) => {
   const [showPopup, setShowPopup] = useState(false);
+  const [showMoreInfo, setShowMoreInfo] = useState(false);
 
   const handleKnowMoreClick = () => {
     setShowPopup(true);
@@ -37,24 +46,52 @@ const Card: React.FC<CardProps> = ({
     setShowPopup(false);
   };
 
+  const handleToggleMoreInfo = () => {
+    setShowMoreInfo(!showMoreInfo);
+  };
+
   // Limiting description length for the card view
   const limitedDescription =
     description.length > 100 ? `${description.substring(0, 100)}...` : description;
+  
+  const truncatedWebsite = truncateUrl(website, 30); // Truncate website URL to 30 characters
+
 
   return (
     <div className="relative">
-      <div className="bg-white rounded-lg p-6 max-w-sm mx-auto min-h-64 w-full md:max-w-md lg:max-w-lg shadow-xl transform transition-transform duration-300 hover:shadow-2xl hover:scale-105 border-2 border-zinc-200">
-        <img src={photoUrl} alt={heading} className="w-full h-48 object-cover rounded-lg mb-4" />
-        <h2 className="text-xl font-semibold mb-2">{heading}</h2>
-        <p className="text-gray-600 mb-4" style={{ wordWrap: 'break-word' }}>
+      <div className="bg-white rounded-lg p-4 max-w-sm mx-auto min-h-48 w-full md:max-w-md lg:max-w-lg shadow-xl transform transition-transform duration-300 hover:shadow-2xl hover:scale-x-105 border-2 border-zinc-200">
+        <div className='flex items-center'>
+          <img src={photoUrl} alt={heading} className="w-10 h-10 border-2 object-cover rounded-lg mr-2" />
+          <h2 className="text-xl font-semibold text-balance">{heading}</h2>
+        </div>
+        <p className="text-gray-600 text-sm my-2" style={{ wordWrap: 'break-word' }}>
           {limitedDescription}
         </p>
-        <button
-          onClick={handleKnowMoreClick}
-          className="bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors duration-200"
-        >
-          Know More
-        </button>
+        <div className='w-full my-2'>
+          {category.map((cat, index) => (
+            <button
+              key={index}
+              className="bg-gray-200 text-gray-700 py-1 px-1 rounded-md text-xs mr-2 gap-1"
+              onClick={() => {
+              }}>
+              {cat}
+            </button>
+          ))}
+        </div>
+        <div className='flex justify-between'>
+          <button
+            onClick={handleKnowMoreClick}
+            className="bg-white text-zinc-800 py-2 px-4 rounded-lg text-sm hover:bg-orange-400 transition-colors duration-200 border-orange-300 border"
+          >
+            Know More
+          </button>
+          <button
+            onClick={handleKnowMoreClick}
+            className="bg-orange-400 text-white py-2 px-4 rounded-full text-sm hover:bg-orange-600 transition-colors duration-200"
+          >
+            Contact
+          </button>
+        </div>
       </div>
 
       {showPopup && (
@@ -81,8 +118,9 @@ const Card: React.FC<CardProps> = ({
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <img src={photoUrl} alt={heading} className="w-full h-80 object-cover rounded-lg mb-4" />
-
+              <img src={photoUrl} alt={heading} className="w-40 h-40 object-cover rounded-lg mb-4 border-2" />
+            </div>
+            <div>
               <p className="text-gray-600 mb-4">
                 Rating: <span className="text-orange-500">{generateStars(rating)} ({rating})</span>
               </p>
@@ -92,16 +130,39 @@ const Card: React.FC<CardProps> = ({
                   <li key={index}>{product}</li>
                 ))}
               </ul>
+              <p className="text-gray-600 mb-4">Categories:</p>
+              <div className="flex items-center mb-2">
+                {category.map((cat, index) => (
+                  <button
+                    key={index}
+                    className="bg-gray-200 text-gray-700 py-1 px-2 rounded-md text-xs mr-2"
+                    onClick={() => {
+                      // Handle category button click action
+                    }}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
               <br />
               <p className="text-gray-600 mb-4">Contact Mail: {contactMail}</p>
-              <p className="text-gray-600 mb-4">Website: {website}</p>
+              <div className='flex gap-2'>
+                <p className="text-gray-600 mb-4">Website:  </p>
+                <a
+                        href={website} // Set the 'href' attribute to the website URL
+                        target="_blank" // Open the link in a new tab/window
+                        rel="noopener noreferrer" // Recommended security attributes for external links
+                        className="text-gray-600 mb-4 underline hover:text-blue-600 focus:text-blue-600 transition-colors duration-200"
+                      >
+                        {" "}{truncatedWebsite}
+                </a>
+              </div>
             </div>
-            <div>
-              <p className="text-gray-600 mb-4">Description:</p>
-              <p className="text-gray-600 mb-4" style={{ wordWrap: 'break-word' }}>
-                {description}
-              </p>
-            </div>
+          </div>
+          
+          <div>
+            <p className="text-gray-600 text-xl mt-4 mb-2">Additional Information:</p>
+            <p className="text-gray-500 text-sm mb-4">{additionalInfo}</p>
           </div>
         </div>
       </div>
