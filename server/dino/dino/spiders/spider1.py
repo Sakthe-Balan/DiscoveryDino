@@ -4,6 +4,7 @@ import boto3
 from dotenv import load_dotenv
 from scrapy import Spider, Request
 from math import ceil
+import uuid
 
 # Load environment variables from .env file
 load_dotenv()
@@ -112,7 +113,8 @@ class Spider1(Spider):
 
                 for i in range(num_chunks):
                     chunk = existing_data[i * chunk_size: (i + 1) * chunk_size]
-                    chunk_file = f'products_chunk_{i + 100}.json'
+                    unique_id = uuid.uuid4()
+                    chunk_file = f'products_chunk_{unique_id}.json'
                     
                     # Save chunk to a separate JSON file
                     with open(chunk_file, 'w') as chunk_json_file:
@@ -127,13 +129,14 @@ class Spider1(Spider):
 
             # Ensure logs.txt exists and is updated regardless of the reason for closure
             logs_file = f'{self.folder_name}/logs.txt'
-            if not s3.head_object(Bucket=self.bucket_name, Key=logs_file):
-                s3.put_object(Bucket=self.bucket_name, Key=logs_file, Body='')
-            else:
-                # Download the current content of logs.txt
-                s3.download_file(self.bucket_name, logs_file, 'temp_logs.txt')
-                with open('temp_logs.txt', 'r') as temp_logs_file:
-                    current_logs = temp_logs_file.read()
+
+            try:
+                # Attempt to download the current content of logs.txt
+                response = s3.get_object(Bucket=self.bucket_name, Key=logs_file)
+                current_logs = response['Body'].read().decode('utf-8')
+            except s3.exceptions.NoSuchKey:
+                # If the logs.txt doesn't exist, create it with an empty content
+                current_logs = ""
 
             # Log success or error message based on the reason
             if reason == 'finished':
@@ -146,7 +149,6 @@ class Spider1(Spider):
 
             # Upload the updated logs back to S3
             s3.put_object(Bucket=self.bucket_name, Key=logs_file, Body=updated_logs, ContentType='text/plain', ACL='public-read')
-
         except Exception as e:
             # Log the error to logs.txt
             error_message = f"Error in {self.name}: {str(e)}\n"

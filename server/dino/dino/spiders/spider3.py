@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from scrapy import Request
 from math import ceil
 from datetime import datetime, timedelta
+import uuid
 
 # Load environment variables from .env file
 load_dotenv()
@@ -130,7 +131,8 @@ class Spider3(scrapy.Spider):
 
                 for i in range(num_chunks):
                     chunk = existing_data[i * chunk_size: (i + 1) * chunk_size]
-                    chunk_file = f'products_chunk_{i + 1}.json'
+                    unique_id = uuid.uuid4()
+                    chunk_file = f'products_chunk_{unique_id}.json'
                     
                     # Save chunk to a separate JSON file
                     with open(chunk_file, 'w') as chunk_json_file:

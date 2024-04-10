@@ -107,11 +107,11 @@ def run_spider(spider_class):
 
 @app.get("/scrape")
 async def scrape_data():
-    # Start both spiders in separate processes
+    # Start spiders in separate processes
     process1 = run_spider(Spider1)
     process2 = run_spider(Spider2)
     process3 = run_spider(Spider3)
-    # Wait for both processes to complete
+    # Wait for processes to complete
     process1.join()
     process2.join()
     process3.join()
