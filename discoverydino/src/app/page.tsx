@@ -6,13 +6,17 @@ import React, { useState,useEffect} from 'react';
 import axios from 'axios';
 interface CardData {
   _id: string;
-  heading: string;
+  productName: string;
   photoUrl: string;
   description: string;
   rating: number;
   similarProducts: string[];
   contactMail: string;
   website: string;
+  category: string[];
+  additionalInfo: string;
+  scarpedLink:string;
+  reviews?: any[];
  }
 
 
@@ -22,7 +26,7 @@ export default function Home() {
   const initialData: CardData[] = [];
 
  const [data, setData] = useState<CardData[]>(initialData);
- const [itemsToDisplay, setItemsToDisplay] = useState<number>(10);
+ const [itemsToDisplay, setItemsToDisplay] = useState<number>(9);
  const [isLoading, setIsLoading] = useState(false);
 
 
@@ -48,7 +52,7 @@ export default function Home() {
         const filteredNewData = newData.filter(item => !existingIds.has(item._id));
         return [...prevData, ...filteredNewData];
       });
-      setItemsToDisplay(prevItems => prevItems + 10);
+      setItemsToDisplay(prevItems => prevItems + 9);
      }
      else {
      console.log("out");}
@@ -77,32 +81,34 @@ export default function Home() {
         <div className="absolute top-2 left-6 bg-yellow-500 h-12 w-12 rounded-lg transform rotate-45"></div>
         
         {/* Filter section */}
-        <div className="w-full z-50 md:w-[20%] md:border-r sm:mr-2 md:flex items-start ">
-          <Filter />
+        <div className="w-full md:w-[20%] md:border-r sm:mr-2">
+            <Filter />
         </div>
 
         {/* Main content section */}
-        <div className="md:w-[80%] flex-grow p-4 mt-4 mx-4 border-r-4 rounded-md shadow-lg bg-white border-gray-300 border-2 relative">
+        <div className="md:w-[80%] flex-grow p-4 mt-4 mx-4 border-r-4 rounded-md shadow-lg bg-white border-gray-300  relative">
           
           {/* Grid of cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {data.map((item, index) => (
               <Card 
                 key={index} // It's important to provide a unique key for each child in a list
-                heading={item.heading} 
+                heading={item.productName} 
                 photoUrl={item.photoUrl} 
                 description={item.description} 
                 rating={item.rating}
                 similarProducts={item.similarProducts}
                 contactMail={item.contactMail}
                 website={item.website}
+                category={item.category}
+                additionalInfo={item.additionalInfo}
               />
             ))}
           </div>
            {/* Conditional rendering of loading indicator */}
           {isLoading && <div className="mt-4 text-center">Loading more items...</div>}
            {/* Load More Button */}
-           <button onClick={handleLoadMore} className="mt-4 bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">
+           <button onClick={handleLoadMore} className="mt-4 bg-orange-500 hover:bg-orange-700 text-white text-base font-bold py-2 px-4 rounded w-full">
             Load More
           </button>
         </div>
