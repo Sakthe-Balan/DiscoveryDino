@@ -36,7 +36,7 @@ class Spider1(Spider):
                 'title': card.css('h3::text').get(),
                 'description': card.css('p::text').get(),
                 'price': card.css('strong::text').get(),
-                'image_url': card.css('img::attr(src)').get(),
+                'image_url': "",
                 'link': card.css('a::attr(href)').get()  # Store the link
             }
 
@@ -46,7 +46,7 @@ class Spider1(Spider):
     def parse_product_details(self, response):
         # Retrieve product data from meta
         product_data = response.meta.get('product_data')
-
+        product_data['image_url'] = response.css('img::attr(data-src)').getall()[0]
         # Extract the desired additional information from the div without any class attribute
         additional_info = response.css('div:not([class])::text').get()
 
@@ -112,7 +112,7 @@ class Spider1(Spider):
 
                 for i in range(num_chunks):
                     chunk = existing_data[i * chunk_size: (i + 1) * chunk_size]
-                    chunk_file = f'products_chunk_{i + 1}.json'
+                    chunk_file = f'products_chunk_{i + 100}.json'
                     
                     # Save chunk to a separate JSON file
                     with open(chunk_file, 'w') as chunk_json_file:
