@@ -108,7 +108,7 @@ export default function Home() {
            {/* Conditional rendering of loading indicator */}
           {isLoading && <div className="mt-4 text-center">Loading more items...</div>}
            {/* Load More Button */}
-           <button onClick={handleLoadMore} className="mt-4 bg-orange-500 hover:bg-orange-700 text-white text-base font-bold py-2 px-4 rounded w-full">
+           <button onClick={handleLoadMore} className="mt-4 bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full">
             Load More
           </button>
         </div>
