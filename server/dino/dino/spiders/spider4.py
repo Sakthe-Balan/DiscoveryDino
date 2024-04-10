@@ -22,68 +22,50 @@ class Spider4(Spider):
         print(links)
         for link in links:
             # Customize the request to the extracted links
+            link='https://crozdesk.com'+link
             yield Request(link, callback=self.custom_parse_method)
 
     def custom_parse_method(self, response):
-        # Custom parsing logic for each extracted link
-        # Example: Extract product details
-        product_data = {
-            'title': response.css('.p::text').get(),
-            'description': response.css('.div::text').get(),
-            # Add more fields as needed
-        }
+        # Initialize an empty dictionary to hold all the data
+        section=response.css('div.cus_provider-panel')
+        for s in section:
+            product_data = {
+                'title': section.css('span.inline-block::text').get(),
+                'image_url': section.css('img::attr(data-src)').get(),
+                'view_profile_link': section.css('a.cus_viewprofilelink::attr(href)').get(),
+                'reviews': [], # Placeholder for reviews
+                'description': [] # Placeholder for description
+            }
+            print(product_data)
+        # Yield a request to extract reviews and description, passing the product_data dictionary
+        yield Request('https://crozdesk.com'+product_data['view_profile_link'], callback=self.parse_reviews_and_description, meta={'product_data': product_data})
 
-        # Custom processing or storage logic
-        # Example: Save product data to a file or database
-        self.save_data(product_data)
+    def parse_reviews_and_description(self, response):
+        # Extracting reviews
+        reviews = response.css('div.cus_no-reviews::text').getall()
 
-    def save_data(self, data):
-        # Custom logic to save data
-        # Example: Save to a JSON file
-        file_exists = os.path.exists(self.output_file) and os.path.getsize(self.output_file) > 0
+        # Extracting description
+        description = [p.css('::text').get() for p in response.css('#provider_description p')]
 
-        with open(self.output_file, 'a') as json_file:
-            if not file_exists:
-                json_file.write('[') # Add opening square bracket if the file is empty
-            else:
-                json_file.write(',') # Add comma to separate JSON objects
+        # Update the product_data dictionary with the extracted reviews and description
+        product_data = response.meta['product_data']
+        product_data['reviews'] = reviews
+        product_data['description'] = description
+        print(product_data)
+        # Yield the final product_data dictionary
+        yield product_data
 
-            json.dump(data, json_file, indent=4)
+     
+
+    
 
     def closed(self, reason):
         try:
-            # Upload the JSON file to S3 after the spider is closed
-            with open(self.output_file, 'a') as json_file:
-                json_file.write(']') # Add closing square bracket to indicate the end of JSON array
             s3 = boto3.client('s3',
                             aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
                             aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
                             region_name=os.getenv('AWS_REGION'))
 
-            # Load existing data from JSON file if it exists and is not empty
-            if os.path.exists(self.output_file) and os.path.getsize(self.output_file) > 0:
-                with open(self.output_file, 'r') as json_file:
-                    existing_data = json.load(json_file)
-
-                total_items = len(existing_data)
-                chunk_size = 1000
-                num_chunks = ceil(total_items / chunk_size)
-
-                for i in range(num_chunks):
-                    chunk = existing_data[i * chunk_size: (i + 1) * chunk_size]
-                    unique_id = uuid.uuid4()
-                    chunk_file = f'products_chunk_{unique_id}.json'
-                    
-                    # Save chunk to a separate JSON file
-                    with open(chunk_file, 'w') as chunk_json_file:
-                        json.dump(chunk, chunk_json_file, indent=4)
-                    
-                    # Upload the chunk file to S3
-                    s3.upload_file(chunk_file, self.bucket_name, f'{self.folder_name}/{chunk_file}')
-                    self.logger.info(f'{chunk_file} uploaded to {self.bucket_name}/{self.folder_name}/{chunk_file}')
-
-                    # Remove the chunk file
-                    os.remove(chunk_file)
 
             # Ensure logs.txt exists and is updated regardless of the reason for closure
             logs_file = f'{self.folder_name}/logs.txt'

@@ -13,9 +13,11 @@ from dino.dino.spiders.spider1 import Spider1
 from dino.dino.spiders.spider2 import Spider2
 from dino.dino.spiders.spider3 import Spider3
 from dino.dino.spiders.spider4 import Spider4
+from dino.dino.spiders.spiderkafka import SpiderKafka
 from multiprocessing import Process
 from typing import Optional, Dict , List , Any
 from importlib import import_module
+
 
 
 from typing import Optional
