@@ -75,6 +75,9 @@ Add more topics for each website as needed
 ## Step 9: Start Consumer
 
 - Keep the consumer running on the same VM if desired.
-- The consumer code is provided .The ENV file has to be  configured.
+- The consumer code is provided .The ENV file has to be configured(Necessary template has been given).
+
+Make sure all the above steps are followed and the broker and the zookeper are running
+Also dont miss to change the server.properties file as said
 
 This README provides a basic setup guide for installing and configuring Apache Kafka. Adjustments may be necessary based on specific requirements and configurations. Make sure to replace `<public_IP>` with the actual public IP of your VM.

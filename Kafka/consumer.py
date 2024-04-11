@@ -6,7 +6,7 @@ import uuid
 import time
 
 # Kafka consumer configuration
-conf = {'bootstrap.servers': "13.233.130.112:9092", 'group.id': 'spider-consumer'}
+conf = {'bootstrap.servers': os.getenv('KAFKA_BOOTSTRAP_SERVERS'), 'group.id': 'spider-consumer'}
 consumer = Consumer(conf)
 
 # Subscribe to topics
