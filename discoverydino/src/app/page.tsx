@@ -33,7 +33,10 @@ export default function Home() {
  const fetchData = async () => {
   setIsLoading(true); // Start loading
   try {
-     const response: any = await axios.get(`http://localhost:8000/api/data?limit=${itemsToDisplay}`);
+
+    console.log(`${process.env.NEXT_PUBLIC_SERVER_URL}`)
+
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/data?limit=${itemsToDisplay}`);
  
      // The response data is already parsed as JSON
     //  console.log(response.data);
