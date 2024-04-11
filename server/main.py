@@ -95,7 +95,8 @@ async def get_data(limit: int = Query(..., description="The number of documents 
     
 @app.get("/api/search")
 async def search_data(collection: str = Query(..., description="Name of the collection to search in"),
-                      searchString: str = Query(None, description="String to search for in productName")):
+                      searchString: str = Query(None, description="String to search for in productName"),
+                      limit: int = Query(None, description="The number of documents to retrieve")):
     """
     Endpoint to search for a specific string within a specified collection based on productName.
 
@@ -127,7 +128,10 @@ async def search_data(collection: str = Query(..., description="Name of the coll
             query = {"productName": {"$regex": f".*{searchString}.*", "$options": "i"}}
         else:
             query = {}
-        search_results = list(target_collection.find(query))
+        if limit:
+            search_results = list(target_collection.find(query).limit(limit))
+        else:
+            search_results = list(target_collection.find(query))
 
         # Convert MongoDB cursor results to JSON format
         # json_results = json.dumps(search_results)
@@ -142,6 +146,7 @@ async def search_data(collection: str = Query(..., description="Name of the coll
 async def filter_data(collection: str = Query(..., description="Name of the collection to search in"),
                       rating: str = Query(None, description="The number of stars to filter from"),
                       category: str = Query(None, description="Pick the category to filter from"),
+                      limit: int = Query(None, description="The number of documents to retrieve")
                       ):
     """
     Endpoint to search for a specific string within a specified collection based on productName.
@@ -184,7 +189,10 @@ async def filter_data(collection: str = Query(..., description="Name of the coll
                 query['rating'] = {'$gte': rating_num}  # Example: Find documents with rating greater than or equal to 'rating_num'
             except ValueError:
                 pass  # Ignore if rating cannot be converted to a float
-        search_results = list(target_collection.find(query))
+        if limit:
+            search_results = list(target_collection.find(query).limit(limit))
+        else:
+            search_results = list(target_collection.find(query))
 
         # Convert MongoDB cursor results to JSON format
         # json_results = json.dumps(search_results)
