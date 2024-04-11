@@ -113,8 +113,9 @@ class Spider3(scrapy.Spider):
 
     
 
-
+# this function executes at the end of the spidder process
     def closed(self, reason):
+        
         producer.flush()
         producer.close()
         try:

@@ -1770,8 +1770,9 @@ class Spider2(scrapy.Spider):
         print(software_info)
         print("Message sent")
 
-
+# this function executes at the end of the spidder process
     def closed(self, reason):
+        
         producer.flush()
         producer.close()
         try:

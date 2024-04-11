@@ -13,7 +13,6 @@ from dino.dino.spiders.spider1 import Spider1
 from dino.dino.spiders.spider2 import Spider2
 from dino.dino.spiders.spider3 import Spider3
 from dino.dino.spiders.spider4 import Spider4
-from dino.dino.spiders.spiderkafka import SpiderKafka
 from multiprocessing import Process
 from typing import Optional, Dict , List , Any
 from importlib import import_module
@@ -213,11 +212,26 @@ async def similar_data():
 
 
 def _run_spider(spider_class):
+    """
+    Internal function to run a Scrapy spider in a CrawlerProcess.
+    
+    Args:
+        spider_class: The class of the spider to run.
+    """
     process = CrawlerProcess(get_project_settings())
     process.crawl(spider_class)
     process.start()
 
 def run_spider(spider_class):
+    """
+    Function to run a Scrapy spider in a separate process.
+    
+    Args:
+        spider_class: The class of the spider to run.
+        
+    Returns:
+        process: The process running the spider.
+    """
     process = Process(target=_run_spider, args=(spider_class,))
     process.start()
     # Store the process in the global dictionary using the spider class name as the key
@@ -226,14 +240,23 @@ def run_spider(spider_class):
 
 @app.get("/scrape")
 async def scrape_data():
+    """
+    Endpoint to initiate scraping by starting spiders in separate processes.
+    
+    Returns:
+        JSON response: Message indicating scraping completion.
+    """
     # Start spiders in separate processes
     process1 = run_spider(Spider1)
     process2 = run_spider(Spider2)
     process3 = run_spider(Spider3)
-    # Wait for processes to complete
-    process1.join()
-    process2.join()
-    process3.join()
+    process4 = run_spider(Spider4)
+    
+    # Optionally, wait for all processes to complete
+    # process1.join()
+    # process2.join()
+    # process3.join()
+    # process4.join()
     return {"message": "Scraping completed"}
 
 @app.post("/stop_spider/{spider_name}")

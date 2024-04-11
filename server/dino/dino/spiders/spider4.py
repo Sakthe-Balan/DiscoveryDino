@@ -58,8 +58,9 @@ class Spider4(Spider):
      
 
     
-
+ # this function executes at the end of the spidder process
     def closed(self, reason):
+        
         try:
             s3 = boto3.client('s3',
                             aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),

@@ -1,11 +1,11 @@
 https://www.capterra.com/categories/
 https://www.softwareadvice.com/categories/
-https://sourceforge.net/software/  -out
-https://www.trustradius.com/categories out
-https://www.getapp.com/browse/ -out
+https://sourceforge.net/software/  
+https://www.trustradius.com/categories 
+https://www.getapp.com/browse/ 
 https://www.softwaresuggest.com/all-categories
 https://www.producthunt.com/categories
-https://clutch.co/sitemap -out
+https://clutch.co/sitemap 
 
 
 
