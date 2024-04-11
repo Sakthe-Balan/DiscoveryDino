@@ -31,15 +31,16 @@ export default function Home() {
  const [eexportdata, setEexportdata]:any = useState();
  const [showExportDialog, setShowExportDialog] = useState(false);
 
-
-  
-
   const [parentSelectedRatings, setParentSelectedRatings] = useState<number[]>(
     []
   );
   const [parentSelectedCategory, setParentSelectedCategory] = useState<
     string | null
   >(null);
+
+  
+
+
 
   useEffect(() => {
     // Define a function to fetch filtered products based on selected ratings and category
@@ -146,9 +147,6 @@ export default function Home() {
     fetchData();
   }, []); // Empty dependency array means this effect runs once on mount
 
-  const handleLoadMore = () => {
-    fetchData();
-  };
 
 
  const handleExport = (exportDisplayedData: boolean) => {
@@ -202,6 +200,10 @@ const exportData = (exportedData: CardData[]) => {
 };
 
 
+
+  const handleLoadMore = () => {
+    fetchData();
+  };
 
   return (
     <>
