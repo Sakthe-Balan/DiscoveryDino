@@ -178,7 +178,7 @@ export default function Home() {
         setIsLoading(true); // Start loading
         try {
           const response: any = await axios.get(
-            `https://itnrmdjr7f.ap-south-1.awsapprunner.com/api/data?limit=0`
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/data?limit=0`
           );
 
           // The response data is already parsed as JSON
