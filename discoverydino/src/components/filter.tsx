@@ -1,14 +1,25 @@
-
-"use client"
+'use client';
 import React, { useState, useEffect } from 'react';
 
 interface Category {
   name: string;
 }
 
-const Filter: React.FC = () => {
-  const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+interface FilterProps {
+  selectedRatings: number[];
+  setSelectedRatings: React.Dispatch<React.SetStateAction<number[]>>;
+  selectedCategory: string | null;
+  setSelectedCategory: React.Dispatch<React.SetStateAction<string | null>>;
+}
+
+const Filter: React.FC<FilterProps> = ({
+  selectedRatings,
+  setSelectedRatings,
+  selectedCategory,
+  setSelectedCategory,
+}) => {
+  // const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
+  // const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showAllCategories, setShowAllCategories] = useState<boolean>(false);
   const [isFilterVisible, setIsFilterVisible] = useState<boolean>(false);
   const [isMobileView, setIsMobileView] = useState<boolean>(false);
@@ -60,35 +71,35 @@ const Filter: React.FC = () => {
     { name: 'Other Services' },
     { name: 'Professional Services' },
     { name: 'Routers' },
-    { name: 'Security' }
+    { name: 'Security' },
   ];
 
   const handleRatingChange = (rating: number) => {
-    setSelectedRatings(prev => {
+    setSelectedRatings((prev) => {
       if (prev.includes(rating)) {
         console.log(`Deselected rating: ${rating}`);
-        return prev.filter(r => r !== rating);
+        return [];
       } else {
         console.log(`Selected rating: ${rating}`);
-        return [...prev, rating];
+        return [rating];
       }
     });
   };
 
   const handleCategoryChange = (categoryName: string) => {
-    setSelectedCategory(prevCategory => {
+    setSelectedCategory((prevCategory) => {
       if (prevCategory === categoryName) {
         console.log(`Deselected category: ${categoryName}`);
         return null;
       } else {
         console.log(`Selected category: ${categoryName}`);
-        return categoryName;
+        return prevCategory === categoryName ? null : categoryName;
       }
     });
   };
 
   const toggleShowCategories = () => {
-    setShowAllCategories(prev => !prev);
+    setShowAllCategories((prev) => !prev);
   };
 
   const renderStar = (index: number, rating: number) => {
@@ -115,31 +126,42 @@ const Filter: React.FC = () => {
     }
   };
 
-  const visibleCategories = showAllCategories ? categories : categories.slice(0, 3);
+  const visibleCategories = showAllCategories
+    ? categories
+    : categories.slice(0, 3);
 
   return (
     <div className="relative">
       {isMobileView && (
         <button
           className="absolute top-0 right-0 mt-4 mr-5 bg-orange-500 text-white px-4 py-2 rounded-md"
-          onClick={() => setIsFilterVisible(prev => !prev)}
+          onClick={() => setIsFilterVisible((prev) => !prev)}
         >
           {isFilterVisible ? '' : 'Show Filter'}
         </button>
       )}
       {isFilterVisible && (
-        <div className="absolute top-full mt-4 left-4 bg-white p-4 pt-1 rounded-lg shadow-md z-10 border-2" style={{ width: '250px' }}>
-          <h2 className="text-lg font-semibold mb-4 text-center py-2 rounded-md">Filter</h2>
-          {isMobileView && <button
+        <div
+          className="absolute top-full mt-4 left-4 bg-white p-4 pt-1 rounded-lg shadow-md z-10 border-2"
+          style={{ width: '250px' }}
+        >
+          <h2 className="text-lg font-semibold mb-4 text-center py-2 rounded-md">
+            Filter
+          </h2>
+          {isMobileView && (
+            <button
               className="absolute top-0 right-0 mt-2 mr-2 bg-orange-500 text-white px-2 py-1 rounded-md"
               onClick={() => setIsFilterVisible(false)}
             >
               ✕
-            </button>}
+            </button>
+          )}
           <div className="mb-4">
-            <h3 className="text-sm font-medium mb-2 border-b-2 border-gray-200 pb-2">Based on Star Rating</h3>
+            <h3 className="text-sm font-medium mb-2 border-b-2 border-gray-200 pb-2">
+              Based on Star Rating
+            </h3>
             <div className="flex flex-col space-y-2">
-              {[1, 2, 3, 4, 5].map(rating => (
+              {[1, 2, 3, 4, 5].map((rating) => (
                 <label key={rating} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -155,10 +177,15 @@ const Filter: React.FC = () => {
             </div>
           </div>
           <div>
-            <h3 className="text-sm font-medium mb-2 border-b-2 border-gray-200 pb-2">Categories</h3>
+            <h3 className="text-sm font-medium mb-2 border-b-2 border-gray-200 pb-2">
+              Categories
+            </h3>
             <div className="flex flex-col space-y-2">
-              {visibleCategories.map(category => (
-                <label key={category.name} className="flex items-center space-x-2">
+              {visibleCategories.map((category) => (
+                <label
+                  key={category.name}
+                  className="flex items-center space-x-2"
+                >
                   <input
                     type="checkbox"
                     checked={selectedCategory === category.name}
@@ -170,8 +197,13 @@ const Filter: React.FC = () => {
               ))}
             </div>
             {categories.length > 4 && (
-              <button className="text-orange-500 text-sm mt-2" onClick={toggleShowCategories}>
-                {showAllCategories ? 'Show less categories' : 'Show more categories'}
+              <button
+                className="text-orange-500 text-sm mt-2"
+                onClick={toggleShowCategories}
+              >
+                {showAllCategories
+                  ? 'Show less categories'
+                  : 'Show more categories'}
               </button>
             )}
           </div>
