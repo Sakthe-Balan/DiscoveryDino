@@ -3,6 +3,7 @@ import Header from "@/components/header";
 import Filter from '@/components/filter';
 import Card from "@/components/card";
 import React, { useState,useEffect} from 'react';
+import { FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 interface CardData {
   _id: string;
@@ -28,12 +29,13 @@ export default function Home() {
  const [data, setData] = useState<CardData[]>(initialData);
  const [itemsToDisplay, setItemsToDisplay] = useState<number>(9);
  const [isLoading, setIsLoading] = useState(false);
-
+ const [eexportdata, setEexportdata]:any = useState();
+ const [showExportDialog, setShowExportDialog] = useState(false);
 
  const fetchData = async () => {
   setIsLoading(true); // Start loading
   try {
-     const response: any = await axios.get(`http://localhost:8000/api/data?limit=${itemsToDisplay}`);
+     const response: any = await axios.get(`https://itnrmdjr7f.ap-south-1.awsapprunner.com/api/data?limit=${itemsToDisplay}`);
  
      // The response data is already parsed as JSON
     //  console.log(response.data);
@@ -72,6 +74,59 @@ export default function Home() {
     fetchData();
  };
 
+
+ const handleExport = (exportDisplayedData: boolean) => {
+  if (exportDisplayedData) {
+    exportData(data);
+  } else {
+    const fetchssData = async () => {
+      setIsLoading(true); // Start loading
+      try {
+         const response: any = await axios.get(`https://itnrmdjr7f.ap-south-1.awsapprunner.com/api/data?limit=0`);
+     
+         // The response data is already parsed as JSON
+        //  console.log(response.data);
+         
+         // Directly use response.data since it's already an object
+    
+         const newData = response.data;
+    
+         console.log('API Response:', newData);
+        console.log(newData)
+         // Check if newData is an array before updating the state
+         if (Array.isArray(newData)) {
+          
+         setEexportdata(newData);
+         
+         }
+         else {
+         console.log("out");}
+      } catch (error) {
+         console.error('Error fetching data:', error);
+         // Optionally, handle the error case, such as showing an error message to the user
+      } finally {
+         setIsLoading(false); // End loading
+      }
+     };
+     fetchssData();
+     exportData(eexportdata)
+  }
+  setShowExportDialog(false);
+};
+
+const exportData = (exportedData: CardData[]) => {
+  const json = JSON.stringify(exportedData);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'data.json';
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+
+
   return (
     <>
       <Header />
@@ -107,12 +162,40 @@ export default function Home() {
           </div>
            {/* Conditional rendering of loading indicator */}
           {isLoading && <div className="mt-4 text-center">Loading more items...</div>}
-           {/* Load More Button */}
-           <button onClick={handleLoadMore} className="mt-4 bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full">
-            Load More
-          </button>
+           {/* Buttons */}
+          {/* Buttons */}
+          <div className="flex justify-between mt-4">
+            <button onClick={() => setShowExportDialog(true)} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+              Export as JSON
+            </button>
+            <button onClick={handleLoadMore} className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">
+              Load More
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Export dialog */}
+{showExportDialog && (
+  <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-white p-6 rounded-md shadow-md">
+      <div className="flex justify-between items-center mb-4">
+        <p className="text-lg font-semibold">Choose export option:</p>
+        <button onClick={() => setShowExportDialog(false)} className="text-gray-600 hover:text-gray-800">
+          <FaTimes />
+        </button>
+      </div>
+      <div className="flex justify-between gap-4">
+        <button onClick={() => handleExport(true)} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+          Export displayed data
+        </button>
+        <button onClick={() => handleExport(false)} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+          Export entire dataset
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </>
   );
 }
