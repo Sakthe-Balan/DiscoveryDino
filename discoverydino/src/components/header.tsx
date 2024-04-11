@@ -1,4 +1,5 @@
 // components/Header.tsx
+import { useState } from 'react';
 import Image from 'next/image';
 import logo from '../../public/logo.jpg'; // Adjust the path to your logo
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,21 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-export default function Header() {
+interface HeaderProps {
+  setSearch: (value: string | null) => void;
+}
+
+export default function Header({ setSearch }: HeaderProps) {
+  const [inputValue, setInputValue] = useState('');
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleSearchClick = () => {
+    setSearch(inputValue);
+  };
+
   return (
     <header
       className="bg-white shadow-lg py-4 px-6 md:px-4 lg:px-4"
@@ -46,8 +61,15 @@ export default function Header() {
               <SelectItem value="scraped_products">Scrapped</SelectItem>
             </SelectContent>
           </Select> */}
-          <Input type="text" placeholder="Search for the latest products" />
-          <Button type="submit">Search</Button>
+          <Input
+            type="text"
+            placeholder="Search for the latest products"
+            value={inputValue}
+            onChange={handleInputChange}
+          />
+          <Button type="submit" onClick={handleSearchClick}>
+            Search
+          </Button>
         </div>
         <nav className="flex items-center">
           <ul className="flex space-x-6">

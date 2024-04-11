@@ -2,8 +2,8 @@
 'use client';
 import Header from '@/components/header';
 import Filter from '@/components/filter';
-import Card from "@/components/card";
-import React, { useState,useEffect} from 'react';
+import Card from '@/components/card';
+import React, { useState, useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 interface CardData {
@@ -25,11 +25,11 @@ export default function Home() {
   // Provide initial data as part of the state
   const initialData: CardData[] = [];
 
- const [data, setData] = useState<CardData[]>(initialData);
- const [itemsToDisplay, setItemsToDisplay] = useState<number>(9);
- const [isLoading, setIsLoading] = useState(false);
- const [eexportdata, setEexportdata]:any = useState();
- const [showExportDialog, setShowExportDialog] = useState(false);
+  const [data, setData] = useState<CardData[]>(initialData);
+  const [itemsToDisplay, setItemsToDisplay] = useState<number>(9);
+  const [isLoading, setIsLoading] = useState(false);
+  const [eexportdata, setEexportdata]: any = useState();
+  const [showExportDialog, setShowExportDialog] = useState(false);
 
   const [parentSelectedRatings, setParentSelectedRatings] = useState<number[]>(
     []
@@ -38,9 +38,32 @@ export default function Home() {
     string | null
   >(null);
 
-  
+  const [search, setSearch] = useState<string | null>(null);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      if (search != null) {
+        console.log(`Searching data ${search}`);
+        try {
+          const apiUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/search?collection=filtered_products&searchString=${search}`;
+          const response = await fetch(apiUrl);
 
+          if (response.ok) {
+            const result = await response.json();
+            setData(result.results);
+          } else {
+            // Handle non-successful response (e.g., show error message)
+            console.error('Failed to fetch data:', response.statusText);
+          }
+        } catch (error) {
+          // Handle fetch error (e.g., network error)
+          console.error('Error fetching data:', error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [search]);
 
   useEffect(() => {
     // Define a function to fetch filtered products based on selected ratings and category
@@ -131,7 +154,7 @@ export default function Home() {
           );
           return [...prevData, ...filteredNewData];
         });
-        setItemsToDisplay((prevItems) => prevItems + 9);
+        // setItemsToDisplay((prevItems) => prevItems + 9);
       } else {
         console.log('out');
       }
@@ -147,60 +170,56 @@ export default function Home() {
     fetchData();
   }, []); // Empty dependency array means this effect runs once on mount
 
+  const handleExport = (exportDisplayedData: boolean) => {
+    if (exportDisplayedData) {
+      exportData(data);
+    } else {
+      const fetchssData = async () => {
+        setIsLoading(true); // Start loading
+        try {
+          const response: any = await axios.get(
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/api/data?limit=0`
+          );
 
+          // The response data is already parsed as JSON
+          //  console.log(response.data);
 
- const handleExport = (exportDisplayedData: boolean) => {
-  if (exportDisplayedData) {
-    exportData(data);
-  } else {
-    const fetchssData = async () => {
-      setIsLoading(true); // Start loading
-      try {
-         const response: any = await axios.get(`https://itnrmdjr7f.ap-south-1.awsapprunner.com/api/data?limit=0`);
-     
-         // The response data is already parsed as JSON
-        //  console.log(response.data);
-         
-         // Directly use response.data since it's already an object
-    
-         const newData = response.data;
-    
-         console.log('API Response:', newData);
-        console.log(newData)
-         // Check if newData is an array before updating the state
-         if (Array.isArray(newData)) {
-          
-         setEexportdata(newData);
-         
-         }
-         else {
-         console.log("out");}
-      } catch (error) {
-         console.error('Error fetching data:', error);
-         // Optionally, handle the error case, such as showing an error message to the user
-      } finally {
-         setIsLoading(false); // End loading
-      }
-     };
-     fetchssData();
-     console.log(eexportdata);
-     exportData(eexportdata)
-  }
-  setShowExportDialog(false);
-};
+          // Directly use response.data since it's already an object
 
-const exportData = (exportedData: CardData[]) => {
-  const json = JSON.stringify(exportedData);
-  const blob = new Blob([json], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'data.json';
-  a.click();
-  URL.revokeObjectURL(url);
-};
+          const newData = response.data;
 
+          console.log('API Response:', newData);
+          console.log(newData);
+          // Check if newData is an array before updating the state
+          if (Array.isArray(newData)) {
+            setEexportdata(newData);
+          } else {
+            console.log('out');
+          }
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          // Optionally, handle the error case, such as showing an error message to the user
+        } finally {
+          setIsLoading(false); // End loading
+        }
+      };
+      fetchssData();
+      console.log(eexportdata);
+      exportData(eexportdata);
+    }
+    setShowExportDialog(false);
+  };
 
+  const exportData = (exportedData: CardData[]) => {
+    const json = JSON.stringify(exportedData);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'data.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const handleLoadMore = () => {
     fetchData();
@@ -208,7 +227,7 @@ const exportData = (exportedData: CardData[]) => {
 
   return (
     <>
-      <Header />
+      <Header setSearch={setSearch} />
       <div className="relative mt-4 flex flex-col md:flex-row flex-grow">
         {/* Background stickers */}
         <div className="absolute top-0 right-0 bg-orange-500 h-20 w-20 rounded-full transform rotate-45"></div>
@@ -243,48 +262,66 @@ const exportData = (exportedData: CardData[]) => {
               />
             ))}
           </div>
-           {/* Conditional rendering of loading indicator */}
-          {isLoading && <div className="mt-4 text-center">Loading more items...</div>}
-           {/* Buttons */}
+          {/* Conditional rendering of loading indicator */}
+          {isLoading && (
+            <div className="mt-4 text-center">Loading more items...</div>
+          )}
+          {/* Buttons */}
           {/* Buttons */}
           <div className="flex justify-between mt-4">
-            <button onClick={() => setShowExportDialog(true)} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+            <button
+              onClick={() => setShowExportDialog(true)}
+              className="mt-4 bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
+            >
               Export as JSON
             </button>
-            <button onClick={handleLoadMore} className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">
-              Load More
-            </button>
+            {parentSelectedRatings.length === 0 &&
+              !parentSelectedCategory &&
+              search == null && (
+                <button
+                  onClick={handleLoadMore}
+                  className="mt-4 bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Load More
+                </button>
+              )}
           </div>
           {/* Conditional rendering of loading indicator */}
-          
+
           {/* Load More Button */}
-          {parentSelectedRatings.length === 0 && !parentSelectedCategory 
-           
-          }
         </div>
       </div>
 
       {/* Export dialog */}
-{showExportDialog && (
-  <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
-    <div className="bg-white p-6 rounded-md shadow-md">
-      <div className="flex justify-between items-center mb-4">
-        <p className="text-lg font-semibold">Choose export option:</p>
-        <button onClick={() => setShowExportDialog(false)} className="text-gray-600 hover:text-gray-800">
-          <FaTimes />
-        </button>
-      </div>
-      <div className="flex justify-between gap-4">
-        <button onClick={() => handleExport(true)} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
-          Export displayed data
-        </button>
-        <button onClick={() => handleExport(false)} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
-          Export entire dataset
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+      {showExportDialog && (
+        <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-md shadow-md">
+            <div className="flex justify-between items-center mb-4">
+              <p className="text-lg font-semibold">Choose export option:</p>
+              <button
+                onClick={() => setShowExportDialog(false)}
+                className="text-gray-600 hover:text-gray-800"
+              >
+                <FaTimes />
+              </button>
+            </div>
+            <div className="flex justify-between gap-4">
+              <button
+                onClick={() => handleExport(true)}
+                className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Export displayed data
+              </button>
+              <button
+                onClick={() => handleExport(false)}
+                className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Export entire dataset
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
