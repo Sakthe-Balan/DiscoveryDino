@@ -33,7 +33,7 @@ export default function Header({ setSearch }: HeaderProps) {
       style={{ borderBottom: '4px solid #f55c08' }}
     >
       <div className=" mx-auto flex justify-between items-center">
-        <div className="flex items-center">
+        <a href="/" className="flex items-center">
           <div className="rounded-full overflow-hidden border border-orange-500">
             <Image
               src={logo}
@@ -49,7 +49,7 @@ export default function Header({ setSearch }: HeaderProps) {
             </h1>
             <p className="text-gray-600">Always Stay Ahead!</p>
           </div>
-        </div>
+        </a>
         <div className="flex w-[50%] items-center space-x-2">
           {/* <Select>
             <SelectTrigger className="w-[180px]">
