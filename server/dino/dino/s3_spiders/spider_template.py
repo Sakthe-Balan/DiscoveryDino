@@ -4,8 +4,6 @@ import boto3
 from dotenv import load_dotenv
 from scrapy import Spider, Request
 from math import ceil
-from confluent_kafka import Producer
-import time
 
 # Instructions for integrating with FastAPI
 # ----------------------------------------
@@ -18,9 +16,7 @@ import time
 
 # Load environment variables from .env file
 load_dotenv()
-conf = {'bootstrap.servers':os.getenv('KAFKA_BOOTSTRAP_SERVERS'),
-        'client.id': 'spider-producer-n'}
-producer = Producer(conf)
+
 class CustomScraper(Spider):
     name = 'custom_scraper'
     start_urls = ['YOUR_START_URL_HERE'] # Define your start URLs here
@@ -48,26 +44,55 @@ class CustomScraper(Spider):
 
         # Custom processing or storage logic
         # Example: Save product data to a file or database
-        # Convert product_data to a JSON string
-        json_str = json.dumps(product_data)
+        self.save_data(product_data)
 
-        # Send the JSON string to the Kafka topic
-        producer.produce(self.folder_name, value=json_str.encode('utf-8'))
-        producer.flush()  # Ensure the message is delivered
-        print(product_data)
-        print("Message sent")
-       
+    def save_data(self, data):
+        # Custom logic to save data
+        # Example: Save to a JSON file
+        file_exists = os.path.exists(self.output_file) and os.path.getsize(self.output_file) > 0
 
-    
+        with open(self.output_file, 'a') as json_file:
+            if not file_exists:
+                json_file.write('[') # Add opening square bracket if the file is empty
+            else:
+                json_file.write(',') # Add comma to separate JSON objects
+
+            json.dump(data, json_file, indent=4)
 
     def closed(self, reason):
-        producer.flush()
-        producer.close()
         try:
+            # Upload the JSON file to S3 after the spider is closed
+            with open(self.output_file, 'a') as json_file:
+                json_file.write(']') # Add closing square bracket to indicate the end of JSON array
             s3 = boto3.client('s3',
                             aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
                             aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
                             region_name=os.getenv('AWS_REGION'))
+
+            # Load existing data from JSON file if it exists and is not empty
+            if os.path.exists(self.output_file) and os.path.getsize(self.output_file) > 0:
+                with open(self.output_file, 'r') as json_file:
+                    existing_data = json.load(json_file)
+
+                total_items = len(existing_data)
+                chunk_size = 1000
+                num_chunks = ceil(total_items / chunk_size)
+
+                for i in range(num_chunks):
+                    chunk = existing_data[i * chunk_size: (i + 1) * chunk_size]
+                    chunk_file = f'products_chunk_{i + 1}.json'
+                    
+                    # Save chunk to a separate JSON file
+                    with open(chunk_file, 'w') as chunk_json_file:
+                        json.dump(chunk, chunk_json_file, indent=4)
+                    
+                    # Upload the chunk file to S3
+                    s3.upload_file(chunk_file, self.bucket_name, f'{self.folder_name}/{chunk_file}')
+                    self.logger.info(f'{chunk_file} uploaded to {self.bucket_name}/{self.folder_name}/{chunk_file}')
+
+                    # Remove the chunk file
+                    os.remove(chunk_file)
+
             # Ensure logs.txt exists and is updated regardless of the reason for closure
             logs_file = f'{self.folder_name}/logs.txt'
             if not s3.head_object(Bucket=self.bucket_name, Key=logs_file):

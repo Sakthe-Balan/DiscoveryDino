@@ -1,2 +1,7 @@
 Zookeeper:bin/zookeeper-server-start.sh config/zookeeper.properties
 kafka: bin/kafka-server-start.sh config/server.properties
+topic: ./bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic softwareadvice
+nano config/server.properties -- advertised.listeners=PLAINTEXT://3.110.132.79:9092 //chnage to the vms public id
+nano ~/.bashrc
+export KAFKA_BOOTSTRAP_SERVERS="3.110.132.79:9092" //chnage to the vms public id
+source ~/.bashrc
