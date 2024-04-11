@@ -18,8 +18,6 @@ const Filter: React.FC<FilterProps> = ({
   selectedCategory,
   setSelectedCategory,
 }) => {
-  // const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
-  // const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showAllCategories, setShowAllCategories] = useState<boolean>(false);
   const [isFilterVisible, setIsFilterVisible] = useState<boolean>(false);
   const [isMobileView, setIsMobileView] = useState<boolean>(false);
@@ -128,7 +126,7 @@ const Filter: React.FC<FilterProps> = ({
 
   const visibleCategories = showAllCategories
     ? categories
-    : categories.slice(0, 3);
+    : categories.slice(0, 8);
 
   return (
     <div className="relative">
