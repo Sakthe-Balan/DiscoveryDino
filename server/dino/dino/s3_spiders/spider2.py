@@ -6,8 +6,6 @@ import scrapy
 from math import ceil
 from urllib.parse import urljoin
 import uuid
-from confluent_kafka import Producer
-import time
 
 software_list = [
     "Account Planning Tools",
@@ -1706,10 +1704,6 @@ software_list = [
     "Pet Sitting Software"
 ]
 
-load_dotenv()
-conf = {'bootstrap.servers':os.getenv('KAFKA_BOOTSTRAP_SERVERS'),
-        'client.id': 'spider-producer2'}
-producer = Producer(conf)
 class Spider2(scrapy.Spider):
     name = 'spider2'
     start_urls = ['https://www.softwaresuggest.com/']
@@ -1761,25 +1755,54 @@ class Spider2(scrapy.Spider):
         
         software_info['reviews'] = response.xpath("//h3[@class='main_review_heading_main'][position() <= 3]/text()").getall()
 
-        # Convert product_data to a JSON string
-        json_str = json.dumps(software_info)
-
-        # Send the JSON string to the Kafka topic
-        producer.produce(self.folder_name, value=json_str.encode('utf-8'))
-        producer.flush()  # Ensure the message is delivered
         print(software_info)
-        print("Message sent")
 
-# this function executes at the end of the spidder process
+        # Check if the output file exists and write the scraped data
+        file_exists = os.path.exists(self.output_file) and os.path.getsize(self.output_file) > 0
+        with open(self.output_file, 'a') as json_file:
+            if not file_exists:
+                json_file.write('[')  # Add opening square bracket if the file is empty
+            else:
+                json_file.write(',')  # Add comma to separate JSON objects
+            json.dump(software_info, json_file, indent=4)
+        yield software_info
+
+
     def closed(self, reason):
-        
-        producer.flush()
-        producer.close()
         try:
+            # Upload the JSON file to S3 after the spider is closed
+            with open(self.output_file, 'a') as json_file:
+                json_file.write(']') # Add closing square bracket to indicate the end of JSON array
             s3 = boto3.client('s3',
                             aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
                             aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
                             region_name=os.getenv('AWS_REGION'))
+
+            # Load existing data from JSON file if it exists and is not empty
+            if os.path.exists(self.output_file) and os.path.getsize(self.output_file) > 0:
+                with open(self.output_file, 'r') as json_file:
+                    existing_data = json.load(json_file)
+
+                total_items = len(existing_data)
+                chunk_size = 1000
+                num_chunks = ceil(total_items / chunk_size)
+
+                for i in range(num_chunks):
+                    chunk = existing_data[i * chunk_size: (i + 1) * chunk_size]
+                    unique_id = uuid.uuid4()
+                    chunk_file = f'products_chunk_{unique_id}.json'
+                    
+                    # Save chunk to a separate JSON file
+                    with open(chunk_file, 'w') as chunk_json_file:
+                        json.dump(chunk, chunk_json_file, indent=4)
+                    
+                    # Upload the chunk file to S3
+                    s3.upload_file(chunk_file, self.bucket_name, f'{self.folder_name}/{chunk_file}')
+                    self.logger.info(f'{chunk_file} uploaded to {self.bucket_name}/{self.folder_name}/{chunk_file}')
+
+                    # Remove the chunk file
+                    os.remove(chunk_file)
+
             # Ensure logs.txt exists and is updated regardless of the reason for closure
             logs_file = f'{self.folder_name}/logs.txt'
             if not s3.head_object(Bucket=self.bucket_name, Key=logs_file):

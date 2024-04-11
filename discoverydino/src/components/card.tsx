@@ -61,7 +61,7 @@ const Card: React.FC<CardProps> = ({
     <div className="relative">
       <div className="bg-white rounded-lg p-4 max-w-sm mx-auto min-h-48 w-full md:max-w-md lg:max-w-lg shadow-xl transform transition-transform duration-300 hover:shadow-2xl hover:scale-x-105 border-2 border-zinc-200">
         <div className='flex items-center'>
-          <img src={photoUrl} alt={heading} className="w-10 h-10 border-2 object-cover rounded-lg mr-2" />
+          <img src={photoUrl} alt={heading}  className=" object-contain w-14 h-14 border-2  rounded-lg mr-2" />
           <h2 className="text-xl font-semibold text-balance">{heading}</h2>
         </div>
         <p className="text-gray-600 text-sm my-2" style={{ wordWrap: 'break-word' }}>
@@ -118,7 +118,7 @@ const Card: React.FC<CardProps> = ({
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <img src={photoUrl} alt={heading} className="w-40 h-40 object-cover rounded-lg mb-4 border-2" />
+              <img src={photoUrl} alt={heading} className="w-40 h-40 object-contain rounded-lg mb-4 border-2" />
             </div>
             <div>
               <p className="text-gray-600 mb-4">
