@@ -6,6 +6,11 @@ import Card from '@/components/card';
 import React, { useState, useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import axios from 'axios';
+import { FaRedoAlt } from 'react-icons/fa';
+
+interface Review {
+  content: string;
+}
 interface CardData {
   _id: string;
   productName: string;
@@ -18,7 +23,7 @@ interface CardData {
   category: string[];
   additionalInfo: string;
   scarpedLink: string;
-  reviews?: any[];
+  reviews: Review[];
 }
 
 export default function Home() {
@@ -28,23 +33,25 @@ export default function Home() {
   const [data, setData] = useState<CardData[]>(initialData);
   const [itemsToDisplay, setItemsToDisplay] = useState<number>(9);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingOverAll, setIsLoadingOverAll] = useState(false);
   const [eexportdata, setEexportdata]: any = useState();
   const [showExportDialog, setShowExportDialog] = useState(false);
-
   const [parentSelectedRatings, setParentSelectedRatings] = useState<number[]>(
     []
   );
   const [parentSelectedCategory, setParentSelectedCategory] = useState<
     string | null
   >(null);
-
   const [search, setSearch] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchSearchData = async () => {
       if (search != null) {
-        console.log(`Searching data ${search}`);
+        // console.log(`Searching data ${search}`);
         try {
+          // setParentSelectedCategory(null);
+          // setParentSelectedRatings([]);
+          setIsLoadingOverAll(true);
           const apiUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/search?collection=filtered_products&searchString=${search}`;
           const response = await fetch(apiUrl);
 
@@ -55,6 +62,7 @@ export default function Home() {
             // Handle non-successful response (e.g., show error message)
             console.error('Failed to fetch data:', response.statusText);
           }
+          setIsLoadingOverAll(false);
         } catch (error) {
           // Handle fetch error (e.g., network error)
           console.error('Error fetching data:', error);
@@ -62,7 +70,7 @@ export default function Home() {
       }
     };
 
-    fetchData();
+    fetchSearchData();
   }, [search]);
 
   useEffect(() => {
@@ -70,6 +78,7 @@ export default function Home() {
     const fetchFilteredProducts = async () => {
       if (parentSelectedRatings.length === 0 && !parentSelectedCategory) {
         try {
+          setIsLoadingOverAll(true);
           const response = await axios.get(
             `${process.env.NEXT_PUBLIC_SERVER_URL}/api/data?limit=9`
           );
@@ -90,10 +99,12 @@ export default function Home() {
             setItemsToDisplay(18);
             // setItemsToDisplay((prevItems) => prevItems + 9);
           }
+          setIsLoadingOverAll(false);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
       } else {
+        setIsLoadingOverAll(true);
         // Construct API URL based on selected ratings and category
         const queryParams = new URLSearchParams({
           collection: 'filtered_products',
@@ -117,12 +128,14 @@ export default function Home() {
           setData(data.results);
           // Update state with filtered products
           console.log(data.results);
+          setIsLoadingOverAll(false);
           // setData(data.results); // Assuming 'results' is the key containing filtered products
         } catch (error) {
           console.error('Error fetching filtered products:', error);
         }
       }
     };
+
     // Call fetchFilteredProducts whenever selected ratings or category change
     fetchFilteredProducts();
   }, [parentSelectedRatings, parentSelectedCategory]);
@@ -130,8 +143,8 @@ export default function Home() {
   const fetchData = async () => {
     setIsLoading(true); // Start loading
     try {
+      // setIsLoadingOverAll(true);
       console.log(`${process.env.NEXT_PUBLIC_SERVER_URL}`);
-
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/data?limit=${itemsToDisplay}`
       );
@@ -155,9 +168,8 @@ export default function Home() {
           return [...prevData, ...filteredNewData];
         });
         // setItemsToDisplay((prevItems) => prevItems + 9);
-      } else {
-        console.log('out');
       }
+      // setIsLoadingOverAll(false);
     } catch (error) {
       console.error('Error fetching data:', error);
       // Optionally, handle the error case, such as showing an error message to the user
@@ -223,6 +235,7 @@ export default function Home() {
 
   const handleLoadMore = () => {
     fetchData();
+    setItemsToDisplay((prevItems) => prevItems + 9);
   };
 
   return (
@@ -245,6 +258,19 @@ export default function Home() {
 
         {/* Main content section */}
         <div className="md:w-[80%] flex-grow p-4 mt-4 mx-4 border-r-4 rounded-md shadow-lg bg-white border-gray-300  relative">
+          {isLoadingOverAll && (
+            <div className="absolute w-full h-full bg-white flex justify-center pt-[20%] top-0 left-0 z-50">
+              <div className="animate-spin  w-14 h-14 ">
+                <FaRedoAlt className="w-14 h-14 text-slate-400" />
+              </div>
+            </div>
+            // <div className="mt-4 text-center">
+            //   <div>
+            //     <FaRedoAlt />
+            //   </div>
+            //   <div></div>
+            // </div>
+          )}
           {/* Grid of cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {data.map((item, index) => (
@@ -259,12 +285,18 @@ export default function Home() {
                 website={item.website}
                 category={item.category}
                 additionalInfo={item.additionalInfo}
+                reviews={item.reviews}
               />
             ))}
           </div>
           {/* Conditional rendering of loading indicator */}
           {isLoading && (
-            <div className="mt-4 text-center">Loading more items...</div>
+            <div className="mt-4 text-center">
+              <div className="flex space-x-2 justify-center items-center">
+                <FaRedoAlt className="animate-spin" />{' '}
+                <div className="text-lg">Loading More Products</div>
+              </div>
+            </div>
           )}
           {/* Buttons */}
           {/* Buttons */}
@@ -286,9 +318,6 @@ export default function Home() {
                 </button>
               )}
           </div>
-          {/* Conditional rendering of loading indicator */}
-
-          {/* Load More Button */}
         </div>
       </div>
 
