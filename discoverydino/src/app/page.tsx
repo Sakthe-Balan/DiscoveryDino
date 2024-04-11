@@ -183,6 +183,7 @@ export default function Home() {
       }
      };
      fetchssData();
+     console.log(eexportdata);
      exportData(eexportdata)
   }
   setShowExportDialog(false);
@@ -255,18 +256,11 @@ const exportData = (exportedData: CardData[]) => {
             </button>
           </div>
           {/* Conditional rendering of loading indicator */}
-          {isLoading && (
-            <div className="mt-4 text-center">Loading more items...</div>
-          )}
+          
           {/* Load More Button */}
-          {parentSelectedRatings.length === 0 && !parentSelectedCategory && (
-            <button
-              onClick={handleLoadMore}
-              className="mt-4 bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full"
-            >
-              Load More
-            </button>
-          )}
+          {parentSelectedRatings.length === 0 && !parentSelectedCategory 
+           
+          }
         </div>
       </div>
 
