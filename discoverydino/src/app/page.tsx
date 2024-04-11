@@ -35,6 +35,33 @@ export default function Home() {
     string | null
   >(null);
 
+  const [search, setSearch] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (search != null) {
+        console.log(`Searching data ${search}`);
+        try {
+          const apiUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/search?collection=filtered_products&searchString=${search}`;
+          const response = await fetch(apiUrl);
+
+          if (response.ok) {
+            const result = await response.json();
+            setData(result.results);
+          } else {
+            // Handle non-successful response (e.g., show error message)
+            console.error('Failed to fetch data:', response.statusText);
+          }
+        } catch (error) {
+          // Handle fetch error (e.g., network error)
+          console.error('Error fetching data:', error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [search]);
+
   useEffect(() => {
     // Define a function to fetch filtered products based on selected ratings and category
     const fetchFilteredProducts = async () => {
@@ -124,7 +151,7 @@ export default function Home() {
           );
           return [...prevData, ...filteredNewData];
         });
-        setItemsToDisplay((prevItems) => prevItems + 9);
+        // setItemsToDisplay((prevItems) => prevItems + 9);
       } else {
         console.log('out');
       }
@@ -146,7 +173,7 @@ export default function Home() {
 
   return (
     <>
-      <Header />
+      <Header setSearch={setSearch} />
       <div className="relative mt-4 flex flex-col md:flex-row flex-grow">
         {/* Background stickers */}
         <div className="absolute top-0 right-0 bg-orange-500 h-20 w-20 rounded-full transform rotate-45"></div>
