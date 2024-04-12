@@ -4,9 +4,11 @@ import Header from '@/components/header';
 import Filter from '@/components/filter';
 import Card from '@/components/card';
 import React, { useState, useEffect } from 'react';
-import { FaTimes,FaTable,FaThLarge } from 'react-icons/fa';
+import { FaTimes, FaTable, FaThLarge } from 'react-icons/fa';
 import axios from 'axios';
 import { FaRedoAlt } from 'react-icons/fa';
+import { FaAlignLeft } from 'react-icons/fa';
+import { FaFilter } from 'react-icons/fa';
 
 interface Review {
   content: string;
@@ -241,9 +243,8 @@ export default function Home() {
   return (
     <>
       <Header setSearch={setSearch} />
-      
+
       <div className="relative mt-4 flex flex-col md:flex-row flex-grow">
-        
         {/* Background stickers */}
         <div className="absolute top-0 right-0 bg-orange-500 h-20 w-20 rounded-full transform rotate-45"></div>
         <div className="absolute top-2 left-6 bg-yellow-500 h-12 w-12 rounded-lg transform rotate-45"></div>
@@ -257,82 +258,81 @@ export default function Home() {
             setSelectedCategory={setParentSelectedCategory}
           />
         </div>
-        <span className=''>
-        <div className='bg-gray-200 w-half h-10 rounded border-r-4 flex items-center pl-4 justify-items-end'>
-          
-      <span className="text-orange-500">
-        {/* Add your table icon here */}
-        <FaTable className="h-6 w-6 mr-2" />
-      </span>
-      <span className="text-yellow-500">
-        {/* Add your cards icon here */}
-        <FaThLarge className="h-6 w-6" />
-      </span>
-    </div>
-    </span>
+        {/* <span className="">
+          <div className="bg-gray-200 w-half h-10 rounded border-r-4 flex items-center pl-4 justify-items-end"></div>
+        </span> */}
         {/* Main content section */}
-
-        <div className="md:w-[80%] flex-grow p-4 mt-4 mx-4 border-r-4 rounded-md shadow-lg bg-white border-gray-300  relative">
-          
+        <div className="md:w-[77%] mt-4">
           {isLoadingOverAll && (
             <div className="absolute w-full h-full bg-white flex justify-center pt-[20%] top-0 left-0 z-50">
               <div className="animate-spin  w-14 h-14 ">
                 <FaRedoAlt className="w-14 h-14 text-slate-400" />
               </div>
             </div>
-            // <div className="mt-4 text-center">
-            //   <div>
-            //     <FaRedoAlt />
-            //   </div>
-            //   <div></div>
-            // </div>
           )}
-          {/* Grid of cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {data.map((item, index) => (
-              <Card
-                key={index} // It's important to provide a unique key for each child in a list
-                heading={item.productName}
-                photoUrl={item.photoUrl}
-                description={item.description}
-                rating={item.rating}
-                similarProducts={item.similarProducts}
-                contactMail={item.contactMail}
-                website={item.website}
-                category={item.category}
-                additionalInfo={item.additionalInfo}
-                reviews={item.reviews}
-              />
-            ))}
-          </div>
-          {/* Conditional rendering of loading indicator */}
-          {isLoading && (
-            <div className="mt-4 text-center">
-              <div className="flex space-x-2 justify-center items-center">
-                <FaRedoAlt className="animate-spin" />{' '}
-                <div className="text-lg">Loading More Products</div>
+          <div className="md:w-full flex items-center justify-between mx-4 p-2 border-r-4 rounded-md shadow-lg bg-white border-gray-300 relative mb-2">
+            <div>Found 6942 Products in database</div>
+            <div className="flex gap-2">
+              <div className="text-orange-500 ">
+                <FaFilter className="h-4 w-4 hover:scale-125" />
+              </div>
+              <div className="text-orange-500">
+                <FaTable className="h-4 w-4 hover:scale-125" />
+              </div>
+              <div className="text-orange-600">
+                {/* <FaThLarge className="h-6 w-6" /> */}
+                <FaAlignLeft className="h-4 w-4 hover:scale-125" />
               </div>
             </div>
-          )}
-          {/* Buttons */}
-          {/* Buttons */}
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={() => setShowExportDialog(true)}
-              className="mt-4 bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Export as JSON
-            </button>
-            {parentSelectedRatings.length === 0 &&
-              !parentSelectedCategory &&
-              search == null && (
-                <button
-                  onClick={handleLoadMore}
-                  className="mt-4 bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
-                >
-                  Load More
-                </button>
-              )}
+          </div>
+          <div className="md:w-full flex-grow p-4  mx-4 border-r-4 rounded-md shadow-lg bg-white border-gray-300  relative">
+            {/* Grid of cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {data.map((item, index) => (
+                <Card
+                  key={index} // It's important to provide a unique key for each child in a list
+                  heading={item.productName}
+                  photoUrl={item.photoUrl}
+                  description={item.description}
+                  rating={item.rating}
+                  similarProducts={item.similarProducts}
+                  contactMail={item.contactMail}
+                  website={item.website}
+                  category={item.category}
+                  additionalInfo={item.additionalInfo}
+                  reviews={item.reviews}
+                />
+              ))}
+            </div>
+            {/* Conditional rendering of loading indicator */}
+            {isLoading && (
+              <div className="mt-4 text-center">
+                <div className="flex space-x-2 justify-center items-center">
+                  <FaRedoAlt className="animate-spin" />{' '}
+                  <div className="text-lg">Loading More Products</div>
+                </div>
+              </div>
+            )}
+            {/* Buttons */}
+            {/* Buttons */}
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={() => setShowExportDialog(true)}
+                className="mt-4 bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Export as JSON
+              </button>
+              {parentSelectedRatings.length === 0 &&
+                !parentSelectedCategory &&
+                search == null && (
+                  <button
+                    onClick={handleLoadMore}
+                    className="mt-4 bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Load More
+                  </button>
+                )}
+            </div>
           </div>
         </div>
       </div>
