@@ -4,7 +4,7 @@ import Header from '@/components/header';
 import Filter from '@/components/filter';
 import Card from '@/components/card';
 import React, { useState, useEffect } from 'react';
-import { FaTimes } from 'react-icons/fa';
+import { FaTimes,FaTable,FaThLarge } from 'react-icons/fa';
 import axios from 'axios';
 import { FaRedoAlt } from 'react-icons/fa';
 
@@ -241,7 +241,9 @@ export default function Home() {
   return (
     <>
       <Header setSearch={setSearch} />
+      
       <div className="relative mt-4 flex flex-col md:flex-row flex-grow">
+        
         {/* Background stickers */}
         <div className="absolute top-0 right-0 bg-orange-500 h-20 w-20 rounded-full transform rotate-45"></div>
         <div className="absolute top-2 left-6 bg-yellow-500 h-12 w-12 rounded-lg transform rotate-45"></div>
@@ -255,9 +257,23 @@ export default function Home() {
             setSelectedCategory={setParentSelectedCategory}
           />
         </div>
-
+        <span className=''>
+        <div className='bg-gray-200 w-half h-10 rounded border-r-4 flex items-center pl-4 justify-items-end'>
+          
+      <span className="text-orange-500">
+        {/* Add your table icon here */}
+        <FaTable className="h-6 w-6 mr-2" />
+      </span>
+      <span className="text-yellow-500">
+        {/* Add your cards icon here */}
+        <FaThLarge className="h-6 w-6" />
+      </span>
+    </div>
+    </span>
         {/* Main content section */}
+
         <div className="md:w-[80%] flex-grow p-4 mt-4 mx-4 border-r-4 rounded-md shadow-lg bg-white border-gray-300  relative">
+          
           {isLoadingOverAll && (
             <div className="absolute w-full h-full bg-white flex justify-center pt-[20%] top-0 left-0 z-50">
               <div className="animate-spin  w-14 h-14 ">
