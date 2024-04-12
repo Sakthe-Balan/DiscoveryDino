@@ -8,3 +8,4 @@ boto3
 openai==1.16.2
 confluent_kafka
 motor
+leptonai

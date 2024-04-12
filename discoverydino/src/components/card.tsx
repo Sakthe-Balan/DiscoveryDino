@@ -1,6 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
+import { FaRedoAlt } from 'react-icons/fa';
 
 interface Review {
   content: string;
@@ -62,6 +65,48 @@ const Card: React.FC<CardProps> = ({
 
   const toggleExpand = () => {
     setExpanded(!expanded);
+  };
+
+  const [query, setQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiResponse, setApiResponse] = useState<string | null>(null);
+
+  const removeCitations = (response: string) => {
+    if (response && typeof response === 'string') {
+      return response.replace(/\[citation:\d+\]/g, ''); // Replace [citation:5], [citation:6], etc. with empty string
+    }
+    return response;
+  };
+
+  const handleSearch = async () => {
+    if (!query.trim()) {
+      return; // Prevent empty search queries
+    }
+
+    setIsLoading(true);
+
+    try {
+      const searchQuery = `$\nProduct Name: ${heading}\n based on the above information answer this ${query}`;
+      console.log(searchQuery);
+      const response = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_SERVER_URL
+        }/api/ai?query=${encodeURIComponent(searchQuery)}`
+      );
+      // const response = await fetch(
+      //   `${
+      //     process.env.NEXT_PUBLIC_SERVER_URL
+      //   }/api/ai?query=${encodeURIComponent(query)}`
+      // );
+      const data = await response.json();
+      const cleanedResponse = removeCitations(data.result);
+      setApiResponse(cleanedResponse);
+    } catch (error) {
+      console.error('Error fetching API:', error);
+      setApiResponse(null);
+    }
+
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -220,6 +265,40 @@ const Card: React.FC<CardProps> = ({
                       </a>
                     </div>
                   </div>
+                </div>
+                <div>
+                  <div className="flex w-full items-center space-x-2">
+                    <Input
+                      type="text"
+                      placeholder="Search powered by AI (in beta)"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                    />
+                    <Button type="submit" onClick={handleSearch}>
+                      Search
+                    </Button>
+                  </div>
+
+                  {isLoading && (
+                    <div className="mt-4 text-center">
+                      <div className="flex space-x-2 justify-center items-center">
+                        <FaRedoAlt className="animate-spin" />{' '}
+                        <div className="text-lg">Generating AI response...</div>
+                      </div>
+                    </div>
+                  )}
+                  {apiResponse && (
+                    <div className="mt-4">
+                      {/* Render the API response here */}
+                      {/* Example: Display response data */}
+                      <div
+                        className="overflow-x-auto max-w-full"
+                        style={{ maxWidth: '100%' }}
+                      >
+                        {JSON.stringify(apiResponse, null, 2)}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div>
