@@ -109,15 +109,17 @@ const Card: React.FC<CardProps> = ({
           {limitedDescription}
         </p>
         <div className="w-full my-2">
-          {category.map((cat, index) => (
-            <button
-              key={index}
-              className="bg-gray-200 text-gray-700 py-1 px-1 rounded-md text-xs mr-2 gap-1"
-              onClick={() => {}}
-            >
-              {cat}
-            </button>
-          ))}
+          {category &&
+            category.length > 0 &&
+            category.map((cat, index) => (
+              <button
+                key={index}
+                className="bg-gray-200 text-gray-700 py-1 px-1 rounded-md text-xs mr-2 gap-1"
+                onClick={() => {}}
+              >
+                {cat}
+              </button>
+            ))}
         </div>
         <div className="flex justify-between">
           {/* <button
@@ -188,20 +190,20 @@ const Card: React.FC<CardProps> = ({
                       ))}
                     </ul> */}
                     <p className="text-gray-600">Categories:</p>
-                    <div className="flex items-center ">
-                      {category.map((cat, index) => (
-                        <button
-                          key={index}
-                          className="bg-gray-200 text-gray-700 py-1 px-2 rounded-md text-xs mr-2"
-                          onClick={() => {
-                            // Handle category button click action
-                          }}
-                        >
-                          {cat}
-                        </button>
-                      ))}
+                    <div className="w-full my-2">
+                      {category &&
+                        category.length > 0 &&
+                        category.map((cat, index) => (
+                          <button
+                            key={index}
+                            className="bg-gray-200 text-gray-700 py-1 px-1 rounded-md text-xs mr-2 gap-1"
+                            onClick={() => {}}
+                          >
+                            {cat}
+                          </button>
+                        ))}
                     </div>
-                    <br />
+                    {/* <br /> */}
                     {/* <p className="text-gray-600 mb-4">
                       Contact Mail: {contactMail}
                     </p> */}
