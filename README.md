@@ -402,6 +402,7 @@ Feel free to submit pull requests or open issues to collaborate and improve the 
 
 For any project-related inquiries or issues, please contact:
 
+- Email: [sakthebalan2003@gmail.com](mailto:adithyaskolavi@gmail.com)
 - Email: [adithyaskolavi@gmail.com](mailto:adithyaskolavi@gmail.com)
 
 Our team is available to address any questions, feedback, or concerns you may have regarding Discovery Dino.
