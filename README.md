@@ -92,19 +92,14 @@ To set up and run Discovery Dino on your local machine, follow these steps:
 
 Alternatively, you can use Docker to run Discovery Dino:
 
-1. Build the Docker image:
+1. Build and Run the Frontend and Backend Images:
 
    ```bash
-   docker build . -t DiscoveryDino
+   docker-compose up
 
    ```
 
-2. Run the Docker container:
 
-   ```bash
-   docker run -p 3000:3000 DiscoveryDino
-
-   ```
 
 By following these steps, you'll have Discovery Dino up and running locally, ready to explore and discover the latest Generally Available (GA) software products effortlessly.
 
