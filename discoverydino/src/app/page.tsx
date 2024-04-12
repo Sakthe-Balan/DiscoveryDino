@@ -288,13 +288,6 @@ export default function Home() {
         </span> */}
         {/* Main content section */}
         <div className="md:w-[77%] mt-4">
-          {isLoadingOverAll && (
-            <div className="absolute w-full h-full bg-white flex justify-center pt-[20%] top-0 left-0 z-50">
-              <div className="animate-spin  w-14 h-14 ">
-                <FaRedoAlt className="w-14 h-14 text-slate-400" />
-              </div>
-            </div>
-          )}
           <div className="md:w-full flex items-center justify-between mx-4 p-2 border-r-4 rounded-md shadow-lg bg-white border-gray-300 relative mb-2">
             <div>Found 6942 Products in database</div>
             <div className="flex gap-2">
@@ -310,6 +303,13 @@ export default function Home() {
             </div>
           </div>
           <div className="md:w-full flex-grow p-4  mx-4 border-r-4 rounded-md shadow-lg bg-white border-gray-300  relative">
+            {isLoadingOverAll && (
+              <div className="absolute w-full h-full bg-white flex justify-center pt-[20%] top-0 left-0 z-50">
+                <div className="animate-spin  w-14 h-14 ">
+                  <FaRedoAlt className="w-14 h-14 text-slate-400" />
+                </div>
+              </div>
+            )}
             {/* Grid of cards */}
             { toggle === "cards" &&
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
