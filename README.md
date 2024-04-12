@@ -9,7 +9,7 @@ Our task is to develop a robust and scalable system that proactively identifies 
 3. **Compile a List**: Maintain a record of products that are not currently listed on G2.
 4. **Streamline Onboarding**: Simplify the process of listing new products on G2.
 
-## **Our Solution - [Discovery Dino](https://discovery-dino-rho.vercel.app/)** ![Dino Logo](https://github.com/Sakthe-Balan/DiscoveryDino/tree/main/assets/logo.png)
+## **Our Solution - [Discovery Dino](https://discovery-dino-rho.vercel.app/)** ![Dino Logo](https://github.com/Sakthe-Balan/DiscoveryDino/tree/main/assets/logo.jpg)
 
 Welcome to Discovery Dino, your friendly assistant designed to simplify the process of discovering and listing the latest Generally Available (GA) software products on G2. We've developed a cloud-native solution deployed on AWS, ensuring scalability, robustness, and efficiency.
 
