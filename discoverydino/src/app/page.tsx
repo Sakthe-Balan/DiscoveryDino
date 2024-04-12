@@ -9,6 +9,8 @@ import axios from 'axios';
 import { FaRedoAlt } from 'react-icons/fa';
 import { FaAlignLeft } from 'react-icons/fa';
 import { FaFilter } from 'react-icons/fa';
+import { DataTable } from './DataTable';
+import { ColumnDef } from "@tanstack/react-table"
 
 interface Review {
   content: string;
@@ -28,6 +30,28 @@ interface CardData {
   reviews: Review[];
 }
 
+export const columns: ColumnDef<CardData>[] = [
+  {
+    accessorKey: "photoUrl",
+    header: "Image",
+ },
+  {
+     accessorKey: "productName",
+     header: "Product Name",
+  },
+
+  {
+     accessorKey: "description",
+     header: "Description",
+  },
+  {
+     accessorKey: "rating",
+     header: "Rating",
+  },
+  ];
+ 
+
+
 export default function Home() {
   // Provide initial data as part of the state
   const initialData: CardData[] = [];
@@ -41,6 +65,7 @@ export default function Home() {
   const [parentSelectedRatings, setParentSelectedRatings] = useState<number[]>(
     []
   );
+  const [toggle, setToggle]:any = useState("cards");
   const [parentSelectedCategory, setParentSelectedCategory] = useState<
     string | null
   >(null);
@@ -276,17 +301,17 @@ export default function Home() {
               <div className="text-orange-500 ">
                 <FaFilter className="h-4 w-4 hover:scale-125" />
               </div>
-              <div className="text-orange-500">
-                <FaTable className="h-4 w-4 hover:scale-125" />
-              </div>
-              <div className="text-orange-600">
-                {/* <FaThLarge className="h-6 w-6" /> */}
-                <FaAlignLeft className="h-4 w-4 hover:scale-125" />
-              </div>
+              <div className={"text-orange-500 transform" + (toggle === "cards" ? " scale-150" : "")} onClick={()=>{setToggle("cards")}}>
+        <FaTable className="h-4 w-4 hover:scale-125" />
+      </div>
+      <div className={"text-orange-600 transform" + (toggle === "tables" ? " scale-150" : "")} onClick={()=>{setToggle("tables")}}>
+        <FaAlignLeft className="h-4 w-4 hover:scale-125" />
+      </div>
             </div>
           </div>
           <div className="md:w-full flex-grow p-4  mx-4 border-r-4 rounded-md shadow-lg bg-white border-gray-300  relative">
             {/* Grid of cards */}
+            { toggle === "cards" &&
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {data.map((item, index) => (
                 <Card
@@ -304,6 +329,13 @@ export default function Home() {
                 />
               ))}
             </div>
+            } 
+            {toggle=== "tables" &&
+            <>
+             <DataTable columns={columns} data={data} />
+            </>
+
+            }
             {/* Conditional rendering of loading indicator */}
             {isLoading && (
               <div className="mt-4 text-center">
