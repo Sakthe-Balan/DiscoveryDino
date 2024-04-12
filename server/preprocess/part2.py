@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from datetime import datetime
+import boto3
 load_dotenv()
 
 # MongoDB connection settings
@@ -23,6 +24,20 @@ G2_API_KEY = os.getenv("G2_API_KEY")
 # Configure logging
 logging.basicConfig(filename='processing_software_advice.log', level=logging.INFO,
                     format='%(asctime)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+
+s3 = boto3.client('s3',
+                            aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+                            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+                            region_name=os.getenv('AWS_REGION'))
+bucket_name = 'dinostomach'
+folder_name = 'softwareadvice'
+object_name = f'{folder_name}/products.json'
+    
+    # Get the object from S3
+response = s3.get_object(Bucket=bucket_name, Key=object_name)
+    
+    # Read the contents of the object (assuming it's a JSON file)
+file_content = response['Body']
 
 # %%
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -51,8 +66,9 @@ category_list = ["Sales Tools", "Marketing", "Analytics Tools & Software", "Arti
 client = MongoClient(MONGO_URI, server_api=ServerApi('1'))
 db = client["g2"]
 
-with open("./software_advice_products.json" , encoding="utf-8") as product_chunk:
-    data = json.load(product_chunk)
+
+data = json.load(file_content)
+
 print(len(data))
 
 # %%
