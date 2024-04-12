@@ -16,6 +16,7 @@ from dino.dino.spiders.spider4 import Spider4
 from multiprocessing import Process
 from typing import Optional, Dict , List , Any
 from importlib import import_module
+import subprocess
 
 
 
@@ -206,19 +207,12 @@ async def filter_data(collection: str = Query(..., description="Name of the coll
     
     pass
 
-@app.get("/api/ingest")
-async def ingest_data():
-    pass
-
-@app.get("/api/s3")
-async def s3_data():
-    pass
-
-@app.get("/api/similar")
-async def similar_data():
-    pass
-
-
+@app.get("/preprocess")
+def preprocess():
+        command = ["pip", "install", "-r", "./preprocess/requirements.txt"]
+        subprocess.run(command, check=True)
+        subprocess.run(["python", "./preprocess/part1.py"], check=True)
+        subprocess.run(["python", "./preprocess/part2.py"], check=True)
 def _run_spider(spider_class):
     """
     Internal function to run a Scrapy spider in a CrawlerProcess.
