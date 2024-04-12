@@ -258,7 +258,7 @@ async def scrape_data():
     process1 = run_spider(Spider1)
     process2 = run_spider(Spider2)
     process3 = run_spider(Spider3)
-    process4 = run_spider(Spider4)
+    # process4 = run_spider(Spider4)
     
     # Optionally, wait for all processes to complete
     # process1.join()

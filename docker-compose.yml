@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./discoverydino  # Path to the directory containing your frontend Dockerfile
+    ports:
+      - "3000:3000"
+
+  backend:
+    build:
+      context: ./server  # Path to the directory containing your backend Dockerfile
+    ports:
+      - "8000:8000"

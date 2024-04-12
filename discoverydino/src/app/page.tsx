@@ -29,26 +29,31 @@ interface CardData {
   scarpedLink: string;
   reviews: Review[];
 }
+interface cc {
+  productName: string;
+  photoUrl: string;
+  description: string;
+  rating: number;
+}
+// export const columns = [
+//   {
+//     accessorKey: "photoUrl",
+//     header: "Image",
+//  },
+//   {
+//      accessorKey: "productName",
+//      header: "Product Name",
+//   },
 
-export const columns: ColumnDef<CardData>[] = [
-  {
-    accessorKey: "photoUrl",
-    header: "Image",
- },
-  {
-     accessorKey: "productName",
-     header: "Product Name",
-  },
-
-  {
-     accessorKey: "description",
-     header: "Description",
-  },
-  {
-     accessorKey: "rating",
-     header: "Rating",
-  },
-  ];
+//   {
+//      accessorKey: "description",
+//      header: "Description",
+//   },
+//   {
+//      accessorKey: "rating",
+//      header: "Rating",
+//   },
+//   ];
  
 
 
@@ -332,7 +337,30 @@ export default function Home() {
             } 
             {toggle=== "tables" &&
             <>
-             <DataTable columns={columns} data={data} />
+             <DataTable columns={[
+  {
+    accessorKey: "photoUrl",
+    header: "Image",
+ },
+  {
+     accessorKey: "productName",
+     header: "Product Name",
+  },
+
+  {
+     accessorKey: "description",
+     header: "Description",
+  },
+  {
+     accessorKey: "rating",
+     header: "Rating",
+  },
+  ]} data={data.map(item => ({
+                                                productName: item.productName,
+                                                photoUrl: item.photoUrl,
+                                                description: item.description,
+                                                rating: item.rating
+                                              }))} />
             </>
 
             }
