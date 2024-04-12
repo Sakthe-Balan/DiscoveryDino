@@ -15,7 +15,7 @@ Welcome to Discovery Dino, your friendly assistant designed to simplify the proc
 
 ### **Solution Overview**
 
-![Architecute Diagram](https://github.com/adithya-s-k/DiscoveryDino/blob/main/assets/DinoArch.png)
+![Architecute Diagram](https://github.com/Sakthe-Balan/DiscoveryDino/tree/main/assets/DinoArch.png)
 
 Our solution comprises three key sections, seamlessly integrated to streamline the product discovery and onboarding process.
 
