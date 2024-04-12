@@ -1,6 +1,7 @@
 import os
 import json
 import uvicorn
+import random
 from dotenv import load_dotenv
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
@@ -17,15 +18,14 @@ from multiprocessing import Process
 from typing import Optional, Dict , List , Any
 from importlib import import_module
 import subprocess
-
-
-
+from leptonai.client import Client
 from typing import Optional
 
 load_dotenv()
 
 # MongoDB connection settings
 MONGO_URI = os.getenv("MONGO_URI")
+LEPTON_API_KEY = os.getenv("LEPTON_API_KEY")
 
 
 # Initialize MongoDB client with server API version 1
@@ -206,6 +206,40 @@ async def filter_data(collection: str = Query(..., description="Name of the coll
     
     
     pass
+
+@app.get("/api/ai")
+def aiSearch(query: str = Query(..., description="the search query you have to pass")):
+    
+    def parse_lepton_response(response_string):
+    # Find the start and end indices of LLM_RESPONSE
+        llm_response_start = response_string.find("__LLM_RESPONSE__") + len("__LLM_RESPONSE__")
+        llm_response_end = response_string.find("__RELATED_QUESTIONS__")
+        
+        # Extract LLM_RESPONSE
+        llm_response = response_string[llm_response_start:llm_response_end].strip()
+    
+        return llm_response
+    client = Client("e6a7hrns", "search", token=LEPTON_API_KEY)
+
+    search_uid = random.randint(10000, 999999)
+    result_bytes = client.query(
+        query=f"{query}",
+        search_uuid=f"{search_uid}"
+        )
+    result_str = result_bytes.decode("utf-8")
+    final_result = parse_lepton_response(result_str)
+
+        # Return the parsed JSON dictionary as the response from the endpoint
+    return {"result" : final_result}
+
+    # Parse the string response (assumed to be in JSON format) into a Python dictionary
+    # try:
+    #     result_dict = json.loads(result_str)
+    # except json.JSONDecodeError as e:
+    #     return {"error": "Failed to parse JSON response", "details": str(e)}
+
+    # Return the parsed JSON dictionary as the response from the endpoint
+    # return result_str
 
 @app.get("/preprocess")
 def preprocess():

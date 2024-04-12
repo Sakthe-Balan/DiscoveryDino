@@ -10,7 +10,7 @@ import { FaRedoAlt } from 'react-icons/fa';
 import { FaAlignLeft } from 'react-icons/fa';
 import { FaFilter } from 'react-icons/fa';
 import { DataTable } from './DataTable';
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef } from '@tanstack/react-table';
 
 interface Review {
   content: string;
@@ -54,8 +54,6 @@ interface cc {
 //      header: "Rating",
 //   },
 //   ];
- 
-
 
 export default function Home() {
   // Provide initial data as part of the state
@@ -70,7 +68,7 @@ export default function Home() {
   const [parentSelectedRatings, setParentSelectedRatings] = useState<number[]>(
     []
   );
-  const [toggle, setToggle]:any = useState("cards");
+  const [toggle, setToggle]: any = useState('cards');
   const [parentSelectedCategory, setParentSelectedCategory] = useState<
     string | null
   >(null);
@@ -296,15 +294,28 @@ export default function Home() {
           <div className="md:w-full flex items-center justify-between mx-4 p-2 border-r-4 rounded-md shadow-lg bg-white border-gray-300 relative mb-2">
             <div>Products Found {data.length}</div>
             <div className="flex gap-2">
-              <div className="text-orange-500 ">
-                <FaFilter className="h-4 w-4 hover:scale-125" />
+              <div
+                className={
+                  'text-orange-500 transform' +
+                  (toggle === 'cards' ? ' scale-150 text-orange-700' : '')
+                }
+                onClick={() => {
+                  setToggle('cards');
+                }}
+              >
+                <FaTable className="h-4 w-4 hover:scale-125" />
               </div>
-              <div className={"text-orange-500 transform" + (toggle === "cards" ? " scale-150" : "")} onClick={()=>{setToggle("cards")}}>
-        <FaTable className="h-4 w-4 hover:scale-125" />
-      </div>
-      <div className={"text-orange-600 transform" + (toggle === "tables" ? " scale-150" : "")} onClick={()=>{setToggle("tables")}}>
-        <FaAlignLeft className="h-4 w-4 hover:scale-125" />
-      </div>
+              <div
+                className={
+                  'text-orange-600 transform' +
+                  (toggle === 'tables' ? ' scale-150 text-orange-700' : '')
+                }
+                onClick={() => {
+                  setToggle('tables');
+                }}
+              >
+                <FaAlignLeft className="h-4 w-4 hover:scale-125" />
+              </div>
             </div>
           </div>
           <div className="md:w-full flex-grow p-4  mx-4 border-r-4 rounded-md shadow-lg bg-white border-gray-300  relative">
@@ -316,54 +327,56 @@ export default function Home() {
               </div>
             )}
             {/* Grid of cards */}
-            { toggle === "cards" &&
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {data.map((item, index) => (
-                <Card
-                  key={index} // It's important to provide a unique key for each child in a list
-                  heading={item.productName}
-                  photoUrl={item.photoUrl}
-                  description={item.description}
-                  rating={item.rating}
-                  similarProducts={item.similarProducts}
-                  contactMail={item.contactMail}
-                  website={item.website}
-                  category={item.category}
-                  additionalInfo={item.additionalInfo}
-                  reviews={item.reviews}
+            {toggle === 'cards' && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {data.map((item, index) => (
+                  <Card
+                    key={index} // It's important to provide a unique key for each child in a list
+                    heading={item.productName}
+                    photoUrl={item.photoUrl}
+                    description={item.description}
+                    rating={item.rating}
+                    similarProducts={item.similarProducts}
+                    contactMail={item.contactMail}
+                    website={item.website}
+                    category={item.category}
+                    additionalInfo={item.additionalInfo}
+                    reviews={item.reviews}
+                  />
+                ))}
+              </div>
+            )}
+            {toggle === 'tables' && (
+              <>
+                <DataTable
+                  columns={[
+                    {
+                      accessorKey: 'photoUrl',
+                      header: 'Image',
+                    },
+                    {
+                      accessorKey: 'productName',
+                      header: 'Product Name',
+                    },
+
+                    {
+                      accessorKey: 'description',
+                      header: 'Description',
+                    },
+                    {
+                      accessorKey: 'rating',
+                      header: 'Rating',
+                    },
+                  ]}
+                  data={data.map((item) => ({
+                    productName: item.productName,
+                    photoUrl: item.photoUrl,
+                    description: item.description,
+                    rating: item.rating,
+                  }))}
                 />
-              ))}
-            </div>
-            } 
-            {toggle=== "tables" &&
-            <>
-             <DataTable columns={[
-  {
-    accessorKey: "photoUrl",
-    header: "Image",
- },
-  {
-     accessorKey: "productName",
-     header: "Product Name",
-  },
-
-  {
-     accessorKey: "description",
-     header: "Description",
-  },
-  {
-     accessorKey: "rating",
-     header: "Rating",
-  },
-  ]} data={data.map(item => ({
-                                                productName: item.productName,
-                                                photoUrl: item.photoUrl,
-                                                description: item.description,
-                                                rating: item.rating
-                                              }))} />
-            </>
-
-            }
+              </>
+            )}
             {/* Conditional rendering of loading indicator */}
             {isLoading && (
               <div className="mt-4 text-center">
