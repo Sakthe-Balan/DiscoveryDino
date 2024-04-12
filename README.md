@@ -383,7 +383,155 @@ The data processing phase involves dynamically retrieving data from S3, processi
 
 By implementing this comprehensive database design and data processing workflow, Discovery Dino optimizes the handling and utilization of scraped product data, enabling efficient discovery and analysis of B2B software products.
 
-## APIs to Test
+# API Documentation
+
+This document provides detailed information on the API endpoints of the FastAPI application.
+
+## General Information
+
+Each endpoint in this documentation includes details about its purpose, the parameters it requires, and the expected response format.
+
+---
+
+### 1. Base Function
+
+**Endpoint:** `/`
+
+**Method:** `GET`
+
+**Parameters:** None
+
+**Response:**
+- **Type:** JSON
+- **Content:**
+  - `message`: Welcome message and service information.
+  - `DB_Status`: Status of the MongoDB connection.
+
+**Description:**
+Provides basic information about the service, including the status of the connection to MongoDB.
+
+---
+
+### 2. Get Data
+
+**Endpoint:** `/api/data`
+
+**Method:** `GET`
+
+**Parameters:**
+- **limit** (int): The number of documents to retrieve.
+
+**Response:**
+- **Type:** JSON
+- **Content:** An array of documents from the specified MongoDB collection.
+
+**Description:**
+Retrieves a specified number of documents from a MongoDB collection.
+
+---
+
+### 3. Search Data
+
+**Endpoint:** `/api/search`
+
+**Method:** `GET`
+
+**Parameters:**
+- **collection** (str): Name of the MongoDB collection to search in.
+- **searchString** (str, optional): String to search for within the productName field.
+- **limit** (int, optional): The number of documents to retrieve.
+
+**Response:**
+- **Type:** JSON
+- **Content:**
+  - `collection`: The MongoDB collection searched.
+  - `searchString`: The string searched for.
+  - `results`: An array of search results.
+
+**Description:**
+Searches for a specific string within a specified collection based on the productName field.
+
+---
+
+### 4. Filter Data
+
+**Endpoint:** `/api/filter`
+
+**Method:** `GET`
+
+**Parameters:**
+- **collection** (str): Name of the MongoDB collection to search in.
+- **rating** (str, optional): The number of stars to filter from.
+- **category** (str, optional): Category to filter from.
+- **limit** (int, optional): The number of documents to retrieve.
+
+**Response:**
+- **Type:** JSON
+- **Content:**
+  - `collection`: The MongoDB collection searched.
+  - `results`: An array of documents that meet the filter criteria.
+
+**Description:**
+Applies filters to the data based on rating and category within a specified collection.
+
+---
+
+### 5. Scrape Data
+
+**Endpoint:** `/scrape`
+
+**Method:** `GET`
+
+**Parameters:** None
+
+**Response:**
+- **Type:** JSON
+- **Content:**
+  - `message`: Message indicating scraping completion.
+
+**Description:**
+Initiates scraping by starting spiders in separate processes.
+
+---
+
+### 6. Stop Spider
+
+**Endpoint:** `/stop_spider/{spider_name}`
+
+**Method:** `POST`
+
+**Parameters:**
+- **spider_name** (str): The name of the class of the spider to stop.
+
+**Response:**
+- **Type:** JSON
+- **Content:**
+  - `message`: Message indicating whether the spider was stopped successfully.
+
+**Description:**
+Stops a running spider by its class name.
+
+---
+
+### 7. Run Specific Spider
+
+**Endpoint:** `/run_spider/{spider_name}`
+
+**Method:** `GET`
+
+**Parameters:**
+- **spider_name** (str): The name of the class of the spider to be run.
+
+**Response:**
+- **Type:** JSON
+- **Content:**
+  - `message`: Message indicating whether the spider was started successfully.
+
+**Description:**
+Runs a specific spider by name, initiating a new process.
+
+---
+
 
 ## Contribution
 
