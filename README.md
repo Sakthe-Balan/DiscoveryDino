@@ -80,12 +80,13 @@ To set up and run Discovery Dino on your local machine, follow these steps:
 4. **Frontend Setup**:
 
    ```bash
-   cd DiscoveryDino/client
+   cd DiscoveryDino/discoverydino
    npm install
    npm run build
    npm start
 
    ```
+**WARNING:** If you want to scrape locally, make sure your Kafka server is set up and the URL is given accordingly(check out the kafka folder). Instead, use `s3_spiders` which directly puts to S3.
 
 ### Using Docker
 
