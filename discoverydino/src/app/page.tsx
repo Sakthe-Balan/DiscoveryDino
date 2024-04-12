@@ -82,7 +82,7 @@ export default function Home() {
           // setParentSelectedCategory(null);
           // setParentSelectedRatings([]);
           setIsLoadingOverAll(true);
-          const apiUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/search?collection=filtered_products&searchString=${search}`;
+          const apiUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/search?collection=Final_products&searchString=${search}`;
           const response = await fetch(apiUrl);
 
           if (response.ok) {
@@ -137,7 +137,7 @@ export default function Home() {
         setIsLoadingOverAll(true);
         // Construct API URL based on selected ratings and category
         const queryParams = new URLSearchParams({
-          collection: 'filtered_products',
+          collection: 'Final_products',
         });
 
         if (parentSelectedRatings.length > 0) {
