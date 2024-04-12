@@ -78,7 +78,7 @@ async def get_data(limit: int = Query(..., description="The number of documents 
     try:
         # Assuming 'client' is your MongoClient instance
         db_name = os.getenv("DB_NAME") # Assuming you have a DB_NAME environment variable
-        collection_name = "filtered_products" # Assuming you have a COLLECTION_NAME environment variable
+        collection_name = "Final_products" # Assuming you have a COLLECTION_NAME environment variable
         if not db_name or not collection_name:
             raise ValueError("DB_NAME or COLLECTION_NAME environment variable is not set")
         db = client[db_name]
