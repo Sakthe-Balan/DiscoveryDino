@@ -294,7 +294,7 @@ export default function Home() {
         {/* Main content section */}
         <div className="md:w-[77%] mt-4">
           <div className="md:w-full flex items-center justify-between mx-4 p-2 border-r-4 rounded-md shadow-lg bg-white border-gray-300 relative mb-2">
-            <div>Found 6942 Products in database</div>
+            <div>Products Found {data.length}</div>
             <div className="flex gap-2">
               <div className="text-orange-500 ">
                 <FaFilter className="h-4 w-4 hover:scale-125" />
