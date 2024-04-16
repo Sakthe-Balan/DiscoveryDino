@@ -1,4 +1,4 @@
-## ** Discovery Dino **
+## **Discovery Dino**
 
 
 We developed a robust and scalable system that proactively identifies new generally available (GA) software products and checks their availability on the G2 software marketplace. The goal is to compile a list of products that are not yet listed on G2, simplifying the process of onboarding them onto the platform.
