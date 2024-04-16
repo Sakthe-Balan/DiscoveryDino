@@ -1,4 +1,10 @@
-## **Discovery Dino**
+## **Discovery Dino** 
+<div style="text-align: center;">
+    <img src="https://github.com/Sakthe-Balan/DiscoveryDino/assets/103580234/dad24723-4e90-470b-8d5b-5e84d0fc3321" alt="Discovery Dino Logo" style="width: 200px; height: auto;">
+</div>
+
+
+
 
 
 We developed a robust and scalable system that proactively identifies new generally available (GA) software products and checks their availability on the G2 software marketplace. The goal is to compile a list of products that are not yet listed on G2, simplifying the process of onboarding them onto the platform.
